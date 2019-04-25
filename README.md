@@ -12,9 +12,6 @@ Package validator 实现了一个支持场景/国际化/自定义错误/自定�
 - 支持自定义验证器
 - 支持自定义错误信息
 
-## dev 依赖
-- [toolbox](https://github.com/goindow/toolbox)
-
 ## 安装
 ```bash
 go get github.com/goindow/validator
