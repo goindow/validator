@@ -71,15 +71,15 @@ func main() {
 ## 如何定义验证规则
 - validator.Scence string 场景
 - validator.Rule struct 规则
-	-- Attr string
-	-- Rule string
-	-- Message string
-	-- Required bool
-	-- Symbol int64
-	-- Max interface{}
-	-- Min interface{}
-	-- Enum []string
-	-- Pattern string
+	- Attr string
+	- Rule string
+	- Message string
+	- Required bool
+	- Symbol int64
+	- Max interface{}
+	- Min interface{}
+	- Enum []string
+	- Pattern string
 - validator.ScenceRules []validator.Rule 验证规则集 - 单一场景
 - validator.Rules map[Scence]ScenceRules 验证规则集 - 所有场景
 ```go
