@@ -62,8 +62,6 @@ func init() {
 		"regex": "{label} 格式不正确",
 		// ipValidator
 		"ip": "无效的 ip",
-		// urlValidator
-		"url": "无效的 url",
 		// emailValidator
 		"email": "无效的 email",
 		// telValidator

@@ -5,25 +5,23 @@ package validator
 
 import (
 	"fmt"
+	"net"
 	"errors"
 	"regexp"
 	"strings"
 	"strconv"
 	"reflect"
-	"net/url"
 	"unicode/utf8"
 	"github.com/goindow/validator/i18n"
 
-	"github.com/goindow/toolbox"
+	// "github.com/goindow/toolbox"
 )
 
-// 默认的错误信息语言
 const (
 	DEFAULT_LANG = "ZH_CN"
 
 	PATTERN_ZIPCODE = `^[1-9]\d{5}$`
 	PATTERN_TEL = `^(0\d{2,3}(\-)?)?\d{7,8}$`
-	PATTERN_IP = `^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$`
 	PATTERN_MOBILE = `^((\+86)|(86))?(1(([35][0-9])|[8][0-9]|[7][01356789]|[4][579]))\d{8}$`
 	PATTERN_EMAIL = `^[\w!#$%&'*+/=?^_` + "`" + `{|}~-]+(?:\.[\w!#$%&'*+/=?^_` + "`" + `{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[a-zA-Z0-9](?:[\w-]*[\w])?$`
 )
@@ -219,9 +217,8 @@ func (this *validator) mount() {
 		"decimal": this.decimalValidator,
 		"number": this.numberValidator,
 		"boolean": this.booleanValidator,
-		"regex": this.regexValidator,
 		"ip": this.ipValidator,
-		"url": this.urlValidator,
+		"regex": this.regexValidator,
 		"email": this.emailValidator,
 		"tel": this.telValidator,
 		"mobile": this.mobileValidator,
@@ -677,6 +674,26 @@ func (this *validator) booleanValidator(attr string, rule Rule, obj M) E {
 	return nil
 }
 
+// ipValidator ip 验证器
+func (this *validator) ipValidator(attr string, rule Rule, obj M) E {
+	// 必填检测
+	if _, ok := obj[attr]; !ok {
+		if !rule.Required {	// 允许为空
+			return nil
+		}
+		return this.generator("required", attr, rule)
+	}
+	// 字符串检测
+	if reflect.ValueOf(obj[attr]).Kind() != reflect.String {
+		return this.generator("string", attr, rule)
+	}
+	// ip 检测
+	if ip := net.ParseIP(obj[attr].(string)); ip == nil {
+		return this.generator("ip", attr, rule)
+	}
+	return nil
+}
+
 // regexMatch 正则匹配
 func (this *validator) regexMatch(attr string, rule Rule, obj M, kind string) E {
 	pattern := rule.Pattern
@@ -705,17 +722,6 @@ func (this *validator) regexMatch(attr string, rule Rule, obj M, kind string) E 
 // regexValidator 正则验证器
 func (this *validator) regexValidator(attr string, rule Rule, obj M) E {
 	return this.regexMatch(attr, rule, obj, "regex")
-}
-
-// ipValidator ip 验证器
-func (this *validator) ipValidator(attr string, rule Rule, obj M) E {
-	rule.Pattern = PATTERN_IP
-	return this.regexMatch(attr, rule, obj, "ip")
-}
-
-// urlValidator url 验证器
-func (this *validator) urlValidator(attr string, rule Rule, obj M) E {
-	return nil
 }
 
 // emailValidator 邮箱验证器
