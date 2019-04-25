@@ -4,16 +4,15 @@
 package validator
 
 import (
-	"fmt"
-	"net"
 	"errors"
-	"regexp"
-	"strings"
-	"strconv"
-	"reflect"
-	"unicode/utf8"
+	"fmt"
 	"github.com/goindow/validator/i18n"
-
+	"net"
+	"reflect"
+	"regexp"
+	"strconv"
+	"strings"
+	"unicode/utf8"
 	// "github.com/goindow/toolbox"
 )
 
@@ -21,37 +20,37 @@ const (
 	DEFAULT_LANG = "ZH_CN"
 
 	PATTERN_ZIPCODE = `^[1-9]\d{5}$`
-	PATTERN_TEL = `^(0\d{2,3}(\-)?)?\d{7,8}$`
-	PATTERN_MOBILE = `^((\+86)|(86))?(1(([35][0-9])|[8][0-9]|[7][01356789]|[4][579]))\d{8}$`
-	PATTERN_EMAIL = `^[\w!#$%&'*+/=?^_` + "`" + `{|}~-]+(?:\.[\w!#$%&'*+/=?^_` + "`" + `{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[a-zA-Z0-9](?:[\w-]*[\w])?$`
+	PATTERN_TEL     = `^(0\d{2,3}(\-)?)?\d{7,8}$`
+	PATTERN_MOBILE  = `^((\+86)|(86))?(1(([35][0-9])|[8][0-9]|[7][01356789]|[4][579]))\d{8}$`
+	PATTERN_EMAIL   = `^[\w!#$%&'*+/=?^_` + "`" + `{|}~-]+(?:\.[\w!#$%&'*+/=?^_` + "`" + `{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[a-zA-Z0-9](?:[\w-]*[\w])?$`
 )
 
 // 验证规则
 type Rule struct {
 	// 必须，待验证属性，单个属性 string，多个属性 []string，其他类型或未定义将 panic
-	Attr	  interface{}
+	Attr interface{}
 	// 必须，验证规则，即验证器，不存在的验证器或未定义将 panic
-	Rule      string
+	Rule string
 	// 可选，自定义错误信息
-	Message	  string
+	Message string
 	// 可选，可空限制，作用于除 requiredValidator 外的所有验证器
 	// false(默认) - 有值验证/无值跳过(如果同时设置了 requiredValidator ，则报 required 错误，此时错误是由 requiredValidator 报出的)
 	// true - 有值验证/无值报 required 错误
-	Required  bool
+	Required bool
 	// 可选，符号限制，作用于 numberValidator、intValidator、floatValidator
 	// 0(默认) - 正/负数，>0 - 正数(不包含0)，<0 - 负数(不包含0)
-	Symbol	  int64
+	Symbol int64
 	// 可选，最大限制，作用于 stringValidator、numberValidator、intValidator、floatValidator
 	// Max < Min 将 Panic
 	// 作用于 stringValidator、intValidator 只能是整数，其他将 panic
 	// 作用于 numberValidator、floatValidator 只能是整数或浮点数，其他将Panic
-	Max       interface{}
+	Max interface{}
 	// 可选，最小限制，同 Rule.Max
-	Min		  interface{}
+	Min interface{}
 	// 必选（inValidator），枚举限制，作用于 inValidator
-	Enum	  []string
+	Enum []string
 	// 必选（regexValidator），正则匹配模式，作用于 regexValidator
-	Pattern   string
+	Pattern string
 }
 
 // 场景
@@ -97,7 +96,7 @@ type validator struct {
 // New 构造器，validator.New()
 func New() *validator {
 	this := &validator{
-		lang: DEFAULT_LANG,
+		lang:           DEFAULT_LANG,
 		default_errors: i18n.Errors[DEFAULT_LANG],
 	}
 	// 挂载内置验证器
@@ -162,12 +161,12 @@ func (this *validator) dispatch(rule Rule, obj M) {
 	}
 	// Rule.Attr 类型错误
 	switch attr.(type) {
-		case string:
-			this.adapter(f, rule, obj, false)
-		case []string:
-			this.adapter(f, rule, obj, true)
-		default:
-			panic("attribute 'Attr' should be 'string' or '[]string'")
+	case string:
+		this.adapter(f, rule, obj, false)
+	case []string:
+		this.adapter(f, rule, obj, true)
+	default:
+		panic("attribute 'Attr' should be 'string' or '[]string'")
 	}
 }
 
@@ -178,7 +177,7 @@ func (this *validator) adapter(f F, rule Rule, obj M, ismultiple bool) {
 		for _, attr := range rule.Attr.([]string) {
 			this.validate(f, attr, rule, obj)
 		}
-		return 
+		return
 	}
 	// 单字段
 	this.validate(f, rule.Attr.(string), rule, obj)
@@ -214,24 +213,24 @@ func (this *validator) generator(name string, attr string, rule Rule, placeholde
 
 // mount 挂载内置验证器
 func (this *validator) mount() {
-	this.validators = map[string]F {
+	this.validators = map[string]F{
 		"required": this.requiredValidator,
-		"in": this.inValidator,
-		"string": this.stringValidator,
-		"integer": this.integerValidator,
-		"decimal": this.decimalValidator,
-		"number": this.numberValidator,
-		"boolean": this.booleanValidator,
-		"ip": this.ipValidator,
-		"regex": this.regexValidator,
-		"email": this.emailValidator,
-		"tel": this.telValidator,
-		"mobile": this.mobileValidator,
-		"zipcode": this.zipcodeValidator,
+		"in":       this.inValidator,
+		"string":   this.stringValidator,
+		"integer":  this.integerValidator,
+		"decimal":  this.decimalValidator,
+		"number":   this.numberValidator,
+		"boolean":  this.booleanValidator,
+		"ip":       this.ipValidator,
+		"regex":    this.regexValidator,
+		"email":    this.emailValidator,
+		"tel":      this.telValidator,
+		"mobile":   this.mobileValidator,
+		"zipcode":  this.zipcodeValidator,
 		// 别名
-		"int": this.integerValidator, // integer
+		"int":   this.integerValidator, // integer
 		"float": this.decimalValidator, // decimal
-		"bool": this.booleanValidator, // boolean
+		"bool":  this.booleanValidator, // boolean
 	}
 }
 
@@ -254,7 +253,7 @@ func (this *validator) inValidator(attr string, rule Rule, obj M) E {
 	}
 	// 必填检测
 	if _, ok := obj[attr]; !ok {
-		if !rule.Required {	// 允许为空
+		if !rule.Required { // 允许为空
 			return nil
 		}
 		return this.generator("required", attr, rule)
@@ -262,26 +261,26 @@ func (this *validator) inValidator(attr string, rule Rule, obj M) E {
 	// 枚举检测
 	var field string
 	switch v := obj[attr].(type) {
-		case int64:
-			field = strconv.Itoa(int(v))
-		case int32:
-			field = strconv.Itoa(int(v))
-		case int16:
-			field = strconv.Itoa(int(v))
-		case int8:
-			field = strconv.Itoa(int(v))
-		case int:
-			field = strconv.Itoa(v)
-		case float64:
-			field = strconv.FormatFloat(v, 'f', -1, 64)
-		case float32:
-			field = strconv.FormatFloat(float64(v), 'f', -1, 32)
-		case string:
-			field = v
-		case bool:
-			field = strconv.FormatBool(v)
-		default:
-			return this.generator("inValid", attr, rule)
+	case int64:
+		field = strconv.Itoa(int(v))
+	case int32:
+		field = strconv.Itoa(int(v))
+	case int16:
+		field = strconv.Itoa(int(v))
+	case int8:
+		field = strconv.Itoa(int(v))
+	case int:
+		field = strconv.Itoa(v)
+	case float64:
+		field = strconv.FormatFloat(v, 'f', -1, 64)
+	case float32:
+		field = strconv.FormatFloat(float64(v), 'f', -1, 32)
+	case string:
+		field = v
+	case bool:
+		field = strconv.FormatBool(v)
+	default:
+		return this.generator("inValid", attr, rule)
 	}
 	in := false
 	for _, v := range enum {
@@ -291,7 +290,7 @@ func (this *validator) inValidator(attr string, rule Rule, obj M) E {
 		}
 	}
 	if !in {
-		return this.generator("in", attr, rule, "[" +strings.Join(enum, "、") + "]")
+		return this.generator("in", attr, rule, "["+strings.Join(enum, "、")+"]")
 	}
 	return nil
 }
@@ -303,7 +302,7 @@ func (this *validator) inValidator(attr string, rule Rule, obj M) E {
 func (this *validator) stringValidator(attr string, rule Rule, obj M) E {
 	// 必填检测
 	if _, ok := obj[attr]; !ok {
-		if !rule.Required {	// 允许为空
+		if !rule.Required { // 允许为空
 			return nil
 		}
 		return this.generator("required", attr, rule)
@@ -317,10 +316,10 @@ func (this *validator) stringValidator(attr string, rule Rule, obj M) E {
 	min := rule.Min
 	if max != nil || min != nil {
 		// 逻辑错误
-		if max != nil && reflect.ValueOf(max).Kind() != reflect.Int{
+		if max != nil && reflect.ValueOf(max).Kind() != reflect.Int {
 			panic(errors.New(fmt.Sprint(rule) + " attribute 'Max' should be int"))
 		}
-		if min != nil && reflect.ValueOf(min).Kind() != reflect.Int{
+		if min != nil && reflect.ValueOf(min).Kind() != reflect.Int {
 			panic(errors.New(fmt.Sprint(rule) + " attribute 'Min' should be int"))
 		}
 		if max != nil && min != nil && min.(int) > max.(int) {
@@ -353,7 +352,7 @@ func (this *validator) stringValidator(attr string, rule Rule, obj M) E {
 func (this *validator) integerValidator(attr string, rule Rule, obj M) E {
 	// 必填检测
 	if _, ok := obj[attr]; !ok {
-		if !rule.Required {	// 允许为空
+		if !rule.Required { // 允许为空
 			return nil
 		}
 		return this.generator("required", attr, rule)
@@ -361,37 +360,37 @@ func (this *validator) integerValidator(attr string, rule Rule, obj M) E {
 	// 类型检测
 	var field float64
 	switch v := obj[attr].(type) {
-		case int64:
-			field = float64(v)
-		case int32:
-			field = float64(v)
-		case int16:
-			field = float64(v)
-		case int8:
-			field = float64(v)
-		case int:
-			field = float64(v)
-		case float64:
-			if v - float64(int(v)) != 0 { // 带小数位
-				return this.generator("integer", attr, rule)	
-			}
-			field = v
-		case float32:
-			if v - float32(int(v)) != 0 { // 带小数位
-				return this.generator("integer", attr, rule)	
-			}
-			field = float64(v)
-		case string:
-			f, err := strconv.ParseFloat(v, 64)
-			if err != nil { // 不能转换为 float64
-				return this.generator("integer", attr, rule)
-			}
-			if f - float64(int(f)) != 0 { // 带小数位
-				return this.generator("integer", attr, rule)	
-			}
-			field = f
-		default:
+	case int64:
+		field = float64(v)
+	case int32:
+		field = float64(v)
+	case int16:
+		field = float64(v)
+	case int8:
+		field = float64(v)
+	case int:
+		field = float64(v)
+	case float64:
+		if v-float64(int(v)) != 0 { // 带小数位
 			return this.generator("integer", attr, rule)
+		}
+		field = v
+	case float32:
+		if v-float32(int(v)) != 0 { // 带小数位
+			return this.generator("integer", attr, rule)
+		}
+		field = float64(v)
+	case string:
+		f, err := strconv.ParseFloat(v, 64)
+		if err != nil { // 不能转换为 float64
+			return this.generator("integer", attr, rule)
+		}
+		if f-float64(int(f)) != 0 { // 带小数位
+			return this.generator("integer", attr, rule)
+		}
+		field = f
+	default:
+		return this.generator("integer", attr, rule)
 	}
 	// 正负检测
 	symbol := rule.Symbol
@@ -416,7 +415,7 @@ func (this *validator) integerValidator(attr string, rule Rule, obj M) E {
 		if max != nil && min != nil && min.(int) > max.(int) {
 			panic(errors.New(fmt.Sprint(rule) + " attribute 'Max' should greater than 'Min'"))
 		}
-		if symbol > 0 { 
+		if symbol > 0 {
 			errPrefix += "Positive"
 			if max != nil && max.(int) <= 0 { // 要求被检测属性是正数，而最大值被设置成负数，panic
 				panic(errors.New(fmt.Sprint(rule) + " attribute 'Max' should greater than 0 when 'Symbal' = " + strconv.FormatInt(symbol, 10)))
@@ -430,14 +429,14 @@ func (this *validator) integerValidator(attr string, rule Rule, obj M) E {
 		}
 		// 比较
 		if max != nil && min == nil && field > (float64)(max.(int)) { // only Max
-			return this.generator(errPrefix + "Max", attr, rule, max)
+			return this.generator(errPrefix+"Max", attr, rule, max)
 		}
 		if min != nil && max == nil && field < (float64)(min.(int)) { // only Min
-			return this.generator(errPrefix + "Min", attr, rule, min)
+			return this.generator(errPrefix+"Min", attr, rule, min)
 		}
 		if max != nil && min != nil && (field > (float64)(max.(int)) || field < (float64)(min.(int))) { // both
-			if max != min {	// range
-				return this.generator(errPrefix + "Range", attr, rule, min, max)
+			if max != min { // range
+				return this.generator(errPrefix+"Range", attr, rule, min, max)
 			}
 			return this.generator("equal", attr, rule, max) // euqal
 		}
@@ -454,7 +453,7 @@ func (this *validator) integerValidator(attr string, rule Rule, obj M) E {
 func (this *validator) decimalValidator(attr string, rule Rule, obj M) E {
 	// 必填检测
 	if _, ok := obj[attr]; !ok {
-		if !rule.Required {	// 允许为空
+		if !rule.Required { // 允许为空
 			return nil
 		}
 		return this.generator("required", attr, rule)
@@ -462,22 +461,22 @@ func (this *validator) decimalValidator(attr string, rule Rule, obj M) E {
 	// 类型检测
 	var field float64
 	switch v := obj[attr].(type) {
-		case float64:
-			field = v
-		case float32:
-			field = float64(v)
-		case string:
-			f, err := strconv.ParseFloat(v, 64)
-			if err != nil { // 不能转换为 float64
-				return this.generator("decimal", attr, rule)
-			}
-			field = f
-		default:
+	case float64:
+		field = v
+	case float32:
+		field = float64(v)
+	case string:
+		f, err := strconv.ParseFloat(v, 64)
+		if err != nil { // 不能转换为 float64
 			return this.generator("decimal", attr, rule)
+		}
+		field = f
+	default:
+		return this.generator("decimal", attr, rule)
 	}
 	// 不带小数位
-	if field - float64(int(field)) == 0 {
-		return this.generator("decimal", attr, rule)	
+	if field-float64(int(field)) == 0 {
+		return this.generator("decimal", attr, rule)
 	}
 	// 正负检测
 	symbol := rule.Symbol
@@ -496,28 +495,28 @@ func (this *validator) decimalValidator(attr string, rule Rule, obj M) E {
 		// 逻辑错误
 		if max != nil {
 			switch v := max.(type) {
-				case float64:
-					fmax = v
-				case int:
-					fmax = float64(v)
-				default:
-					panic(errors.New(fmt.Sprint(rule) + " attribute 'Max' should be int or float64"))
+			case float64:
+				fmax = v
+			case int:
+				fmax = float64(v)
+			default:
+				panic(errors.New(fmt.Sprint(rule) + " attribute 'Max' should be int or float64"))
 			}
 		}
 		if min != nil {
 			switch v := min.(type) {
-				case float64:
-					fmin = v
-				case int:
-					fmin = float64(v)
-				default:
-					panic(errors.New(fmt.Sprint(rule) + " attribute 'Min' should be int or float64"))
+			case float64:
+				fmin = v
+			case int:
+				fmin = float64(v)
+			default:
+				panic(errors.New(fmt.Sprint(rule) + " attribute 'Min' should be int or float64"))
 			}
 		}
 		if max != nil && min != nil && fmin > fmax {
 			panic(errors.New(fmt.Sprint(rule) + " attribute 'Max' should greater than 'Min'"))
 		}
-		if symbol > 0 { 
+		if symbol > 0 {
 			errPrefix += "Positive"
 			if max != nil && fmax <= 0 { // 要求被检测属性是正数，而最大值被设置成负数，panic
 				panic(errors.New(fmt.Sprint(rule) + " attribute 'Max' should greater than 0 when 'Symbal' = " + strconv.FormatInt(symbol, 10)))
@@ -530,15 +529,15 @@ func (this *validator) decimalValidator(attr string, rule Rule, obj M) E {
 			}
 		}
 		// 比较
-		if max != nil && min == nil && field > fmax{ // only Max
-			return this.generator(errPrefix + "Max", attr, rule, max)
+		if max != nil && min == nil && field > fmax { // only Max
+			return this.generator(errPrefix+"Max", attr, rule, max)
 		}
 		if min != nil && max == nil && field < fmin { // only Min
-			return this.generator(errPrefix + "Min", attr, rule, min)
+			return this.generator(errPrefix+"Min", attr, rule, min)
 		}
 		if max != nil && min != nil && (field > fmax || field < fmin) { // both
-			if max != min {	// range
-				return this.generator(errPrefix + "Range", attr, rule, min, max)
+			if max != min { // range
+				return this.generator(errPrefix+"Range", attr, rule, min, max)
 			}
 			return this.generator("equal", attr, rule, max) // euqal
 		}
@@ -555,7 +554,7 @@ func (this *validator) decimalValidator(attr string, rule Rule, obj M) E {
 func (this *validator) numberValidator(attr string, rule Rule, obj M) E {
 	// 必填检测
 	if _, ok := obj[attr]; !ok {
-		if !rule.Required {	// 允许为空
+		if !rule.Required { // 允许为空
 			return nil
 		}
 		return this.generator("required", attr, rule)
@@ -563,28 +562,28 @@ func (this *validator) numberValidator(attr string, rule Rule, obj M) E {
 	// 类型检测
 	var field float64
 	switch v := obj[attr].(type) {
-		case int64:
-			field = float64(v) 
-		case int32:
-			field = float64(v)
-		case int16:
-			field = float64(v)
-		case int8:
-			field = float64(v)
-		case int:
-			field = float64(v)
-		case float64:
-			field = v
-		case float32:
-			field = float64(v)
-		case string:
-			f, err := strconv.ParseFloat(v, 64)
-			if err != nil { // 不能转换为 float64
-				return this.generator("number", attr, rule)
-			}
-			field = f
-		default:
+	case int64:
+		field = float64(v)
+	case int32:
+		field = float64(v)
+	case int16:
+		field = float64(v)
+	case int8:
+		field = float64(v)
+	case int:
+		field = float64(v)
+	case float64:
+		field = v
+	case float32:
+		field = float64(v)
+	case string:
+		f, err := strconv.ParseFloat(v, 64)
+		if err != nil { // 不能转换为 float64
 			return this.generator("number", attr, rule)
+		}
+		field = f
+	default:
+		return this.generator("number", attr, rule)
 	}
 	// 正负检测
 	symbol := rule.Symbol
@@ -603,28 +602,28 @@ func (this *validator) numberValidator(attr string, rule Rule, obj M) E {
 		// 逻辑错误
 		if max != nil {
 			switch v := max.(type) {
-				case float64:
-					fmax = v
-				case int:
-					fmax = float64(v)
-				default:
-					panic(errors.New(fmt.Sprint(rule) + " attribute 'Max' should be int or float64"))
+			case float64:
+				fmax = v
+			case int:
+				fmax = float64(v)
+			default:
+				panic(errors.New(fmt.Sprint(rule) + " attribute 'Max' should be int or float64"))
 			}
 		}
 		if min != nil {
 			switch v := min.(type) {
-				case float64:
-					fmin = v
-				case int:
-					fmin = float64(v)
-				default:
-					panic(errors.New(fmt.Sprint(rule) + " attribute 'Min' should be int or float64"))
+			case float64:
+				fmin = v
+			case int:
+				fmin = float64(v)
+			default:
+				panic(errors.New(fmt.Sprint(rule) + " attribute 'Min' should be int or float64"))
 			}
 		}
 		if max != nil && min != nil && fmin > fmax {
 			panic(errors.New(fmt.Sprint(rule) + " attribute 'Max' should greater than 'Min'"))
 		}
-		if symbol > 0 { 
+		if symbol > 0 {
 			errPrefix += "Positive"
 			if max != nil && fmax <= 0 { // 要求被检测属性是正数，而最大值被设置成负数，panic
 				panic(errors.New(fmt.Sprint(rule) + " attribute 'Max' should greater than 0 when 'Symbal' = " + strconv.FormatInt(symbol, 10)))
@@ -637,20 +636,20 @@ func (this *validator) numberValidator(attr string, rule Rule, obj M) E {
 			}
 		}
 		// 比较
-		if max != nil && min == nil && field > fmax{ // only Max
-			return this.generator(errPrefix + "Max", attr, rule, max)
+		if max != nil && min == nil && field > fmax { // only Max
+			return this.generator(errPrefix+"Max", attr, rule, max)
 		}
 		if min != nil && max == nil && field < fmin { // only Min
-			return this.generator(errPrefix + "Min", attr, rule, min)
+			return this.generator(errPrefix+"Min", attr, rule, min)
 		}
 		if max != nil && min != nil && (field > fmax || field < fmin) { // both
-			if max != min {	// range
-				return this.generator(errPrefix + "Range", attr, rule, min, max)
+			if max != min { // range
+				return this.generator(errPrefix+"Range", attr, rule, min, max)
 			}
 			return this.generator("equal", attr, rule, max) // euqal
 		}
 	}
- 	return nil
+	return nil
 }
 
 // boolValidator 布尔验证器（布尔值/字符串表示的布尔值[1、0、t、f、true、false(忽略大小写)]）
@@ -659,21 +658,21 @@ func (this *validator) numberValidator(attr string, rule Rule, obj M) E {
 func (this *validator) booleanValidator(attr string, rule Rule, obj M) E {
 	// 必填检测
 	if _, ok := obj[attr]; !ok {
-		if !rule.Required {	// 允许为空
+		if !rule.Required { // 允许为空
 			return nil
 		}
 		return this.generator("required", attr, rule)
 	}
 	// 类型检测
 	switch v := obj[attr].(type) {
-		case bool:
-			return nil
-		case string:
-			if _, err := strconv.ParseBool(strings.ToLower(v)); err != nil {
-				return this.generator("boolean", attr, rule)
-			}
-		default:
+	case bool:
+		return nil
+	case string:
+		if _, err := strconv.ParseBool(strings.ToLower(v)); err != nil {
 			return this.generator("boolean", attr, rule)
+		}
+	default:
+		return this.generator("boolean", attr, rule)
 	}
 	return nil
 }
@@ -682,7 +681,7 @@ func (this *validator) booleanValidator(attr string, rule Rule, obj M) E {
 func (this *validator) ipValidator(attr string, rule Rule, obj M) E {
 	// 必填检测
 	if _, ok := obj[attr]; !ok {
-		if !rule.Required {	// 允许为空
+		if !rule.Required { // 允许为空
 			return nil
 		}
 		return this.generator("required", attr, rule)
@@ -706,7 +705,7 @@ func (this *validator) regexValidator(attr string, rule Rule, obj M) E {
 	}
 	// 必填检测
 	if _, ok := obj[attr]; !ok {
-		if !rule.Required {	// 允许为空
+		if !rule.Required { // 允许为空
 			return nil
 		}
 		return this.generator("required", attr, rule)
@@ -718,7 +717,7 @@ func (this *validator) regexValidator(attr string, rule Rule, obj M) E {
 	// 正则检测
 	regex := regexp.MustCompile(pattern)
 	if !regex.MatchString(obj[attr].(string)) {
-		return this.generator(rule.Rule, attr, rule)	
+		return this.generator(rule.Rule, attr, rule)
 	}
 	return nil
 }

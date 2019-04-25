@@ -1,11 +1,10 @@
 package validator
 
 import (
-	"testing"
-	"fmt"
 	"errors"
+	"fmt"
 	"strings"
-
+	"testing"
 	// "github.com/goindow/toolbox"
 )
 
@@ -15,9 +14,9 @@ const (
 )
 
 var (
-	v *validator
+	v          *validator
 	rulesEmpty = Rules{}
-	objEmpty = map[string]interface{}{}
+	objEmpty   = map[string]interface{}{}
 )
 
 func init() {
@@ -29,7 +28,7 @@ func init() {
 
 // 切换语言包
 func Test_Lang(t *testing.T) {
-	vEnglish := New().Lang(EN_US)	// 重新实例化，避免语言对其他用例造成影响
+	vEnglish := New().Lang(EN_US) // 重新实例化，避免语言对其他用例造成影响
 	var rules = Rules{
 		"create": {
 			{Attr: "hobby", Rule: "required"},
@@ -39,8 +38,8 @@ func Test_Lang(t *testing.T) {
 	e := vEnglish.Validate(rules, objEmpty, "create")
 	// toolbox.Dump(e) // [map[hobby:missing field hobby]]
 	if len(e) == 0 || e[0]["hobby"].Error() != message {
-		fail(t, "should print errors(" + message + ")")
-	}	
+		fail(t, "should print errors("+message+")")
+	}
 }
 
 // 未定义语言包
@@ -50,7 +49,7 @@ func Test_Lang_Undefiend_Lang(t *testing.T) {
 		p := recover()
 		// toolbox.Dump(p) // undefined_lang unsupport language
 		if p == nil {
-			fail(t, "should panic(" + LANG + " unsupport language)")
+			fail(t, "should panic("+LANG+" unsupport language)")
 		}
 	}()
 	v.Lang(LANG)
@@ -65,7 +64,7 @@ func Test_Valiadte_Undefined_Scence(t *testing.T) {
 		p := recover()
 		// toolbox.Dump(p) // undefinde_scence scence undefined
 		if p == nil {
-			fail(t, "should panic(" + string(SCENCE) + " scence undefined)")
+			fail(t, "should panic("+string(SCENCE)+" scence undefined)")
 		}
 	}()
 	v.Validate(rulesEmpty, objEmpty, SCENCE)
@@ -85,7 +84,7 @@ func Test_Dispatch_Undefined_Rule(t *testing.T) {
 		p := recover()
 		// toolbox.Dump(p) // undefined_rule validator undefined
 		if p == nil {
-			fail(t, "should panic(" + RULE + " validator undefined)")
+			fail(t, "should panic("+RULE+" validator undefined)")
 		}
 	}()
 	v.Validate(rules, objEmpty, "create")
@@ -102,7 +101,7 @@ func Test_Dispatch_NotFound_Rule(t *testing.T) {
 		p := recover()
 		// toolbox.Dump(p) // {username   false <nil> <nil> [] 0} attribute 'Rule' not found
 		if p == nil {
-			fail(t, "should panic(" + fmt.Sprint(rules["create"][0]) + " attribute 'Rule' not found)")
+			fail(t, "should panic("+fmt.Sprint(rules["create"][0])+" attribute 'Rule' not found)")
 		}
 	}()
 	v.Validate(rules, objEmpty, "create")
@@ -119,7 +118,7 @@ func Test_Dispatch_NotFound_Attr(t *testing.T) {
 		p := recover()
 		// toolbox.Dump(p) // {<nil> required  false <nil> <nil> [] 0} attribute 'Attr' not found
 		if p == nil {
-			fail(t, "should panic(" + fmt.Sprint(rules["create"][0]) + " attribute 'Attr' not found)")
+			fail(t, "should panic("+fmt.Sprint(rules["create"][0])+" attribute 'Attr' not found)")
 		}
 	}()
 	v.Validate(rules, objEmpty, "create")
@@ -155,7 +154,7 @@ func Test_Generator_ErrorInfo(t *testing.T) {
 	e := v.Validate(rules, objEmpty, "create")
 	// toolbox.Dump(e) // [map[username:username 不能为空]]
 	if len(e) == 0 || e[0]["username"].Error() != message {
-		fail(t, "should print error(" + message + ")")
+		fail(t, "should print error("+message+")")
 	}
 }
 
@@ -169,7 +168,7 @@ func Test_Generator_ErrorInfo_Custom(t *testing.T) {
 	e := v.Validate(rules, objEmpty, "create")
 	// toolbox.Dump(e) // [map[username:用户名不能为空]]
 	if len(e) == 0 || e[0]["username"].Error() != rules["create"][0].Message {
-		fail(t, "should print error(" + rules["create"][0].Message + ")")
+		fail(t, "should print error("+rules["create"][0].Message+")")
 	}
 }
 
@@ -195,7 +194,7 @@ func add() {
 	if _, ok := v.validators[name]; !ok {
 		v.AddValidator(name, func(attr string, rule Rule, obj M) E {
 			if _, ok := obj[attr]; !ok {
-				if !rule.Required {	// 允许为空
+				if !rule.Required { // 允许为空
 					return nil
 				}
 				return v.generator("required", attr, rule)
@@ -222,7 +221,7 @@ func Test_AddValidator(t *testing.T) {
 	e := v.Validate(rules, obj, "create")
 	// toolbox.Dump(e) // [map[field:必须等于一]]
 	if len(e) == 0 || e[0]["field"].Error() != message {
-		fail(t, "should print error(" + message + ")")
+		fail(t, "should print error("+message+")")
 	}
 }
 
@@ -248,7 +247,6 @@ func generator(message, new string, placeholder ...interface{}) string {
 	e := strings.Replace(message, "{label}", new, -1)
 	return fmt.Sprintf(e, placeholder...)
 }
-
 
 func fail(t *testing.T, s string) {
 	echo(t, s, 1)
