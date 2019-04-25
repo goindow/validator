@@ -117,7 +117,12 @@ func (this *validator) Lang(lang string) *validator {
 }
 
 // AddValidator 自定义验证器，新增验证规则，方便扩展
-func (this *validator) AddValidator() {}
+func (this *validator) AddValidator(name string, customValidator F) {
+	if _, ok := this.validators[name]; ok {
+		panic(errors.New("validator named '" + name + "' already exists"))
+	}
+	this.validators[name] = customValidator
+}
 
 // Validate 场景验证
 func (this *validator) Validate(rules Rules, obj M, scence Scence) []E {
@@ -227,7 +232,6 @@ func (this *validator) mount() {
 		"int": this.integerValidator, // integer
 		"float": this.decimalValidator, // decimal
 		"bool": this.booleanValidator, // boolean
-		"phone": this.mobileValidator, // mobile
 	}
 }
 
@@ -694,8 +698,8 @@ func (this *validator) ipValidator(attr string, rule Rule, obj M) E {
 	return nil
 }
 
-// regexMatch 正则匹配
-func (this *validator) regexMatch(attr string, rule Rule, obj M, kind string) E {
+// regexValidator 正则验证器
+func (this *validator) regexValidator(attr string, rule Rule, obj M) E {
 	pattern := rule.Pattern
 	if len(pattern) == 0 {
 		panic(errors.New(fmt.Sprint(rule) + " attribute 'Pattern' not found or empty"))
@@ -714,36 +718,35 @@ func (this *validator) regexMatch(attr string, rule Rule, obj M, kind string) E 
 	// 正则检测
 	regex := regexp.MustCompile(pattern)
 	if !regex.MatchString(obj[attr].(string)) {
-		return this.generator(kind, attr, rule)	
+		return this.generator(rule.Rule, attr, rule)	
 	}
 	return nil
 }
 
-// regexValidator 正则验证器
-func (this *validator) regexValidator(attr string, rule Rule, obj M) E {
-	return this.regexMatch(attr, rule, obj, "regex")
-}
-
 // emailValidator 邮箱验证器
 func (this *validator) emailValidator(attr string, rule Rule, obj M) E {
+	rule.Rule = "email" // 为防止使用验证器的别名导致内置错误找不到，这里重新赋值
 	rule.Pattern = PATTERN_EMAIL
-	return this.regexMatch(attr, rule, obj, "email")
+	return this.regexValidator(attr, rule, obj)
 }
 
 // mobileValidator 中国大陆座机号验证器
 func (this *validator) telValidator(attr string, rule Rule, obj M) E {
+	rule.Rule = "tel"
 	rule.Pattern = PATTERN_TEL
-	return this.regexMatch(attr, rule, obj, "tel")
+	return this.regexValidator(attr, rule, obj)
 }
 
 // mobileValidator 中国大陆手机号验证器
 func (this *validator) mobileValidator(attr string, rule Rule, obj M) E {
+	rule.Rule = "mobile"
 	rule.Pattern = PATTERN_MOBILE
-	return this.regexMatch(attr, rule, obj, "mobile")
+	return this.regexValidator(attr, rule, obj)
 }
 
 // mobileValidator 中国大陆邮编验证器
 func (this *validator) zipcodeValidator(attr string, rule Rule, obj M) E {
+	rule.Rule = "zipcode"
 	rule.Pattern = PATTERN_ZIPCODE
-	return this.regexMatch(attr, rule, obj, "zipcode")
+	return this.regexValidator(attr, rule, obj)
 }
