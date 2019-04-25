@@ -1,6 +1,6 @@
 // Package validator 实现了一个支持场景/国际化/自定义错误/自定义验证规则的 map[string]interface{} 元素批量验证器，意在支持各种框架的 model 层实现自动验证，亦可单独使用，
 // 该验证器是逻辑验证器（float64(10)/int32(10) 均可被 intValidator 验证通过）而不是强类型验证器（如果需要强类型验证，可以自定义验证规则，或直接断言），
-// 考虑到经过 encoding/json 解析后的数字类型均被解析为 float64，故强类型验证器不太可用，故如此设计，如需强类型验证，请使用 AddValidator 自行扩展
+// 考虑到经过 encoding/json 解析后的数字类型均被解析为 float64，强类型验证器不太可用，故此设计，如需强类型验证，请使用 AddValidator 自行扩展
 package validator
 
 import (
