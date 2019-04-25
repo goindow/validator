@@ -3,6 +3,7 @@ package validator
 import (
 	"testing"
 	"fmt"
+	"errors"
 	"strings"
 
 	// "github.com/goindow/toolbox"
@@ -24,9 +25,7 @@ func init() {
 	// toolbox.Dump(v)
 }
 
-/*****************************************************************/
-/***************************** Lang() ****************************/
-/*****************************************************************/
+/***** Lang() *****/
 
 // 切换语言包
 func Test_Lang(t *testing.T) {
@@ -57,9 +56,7 @@ func Test_Lang_Undefiend_Lang(t *testing.T) {
 	v.Lang(LANG)
 }
 
-/*****************************************************************/
-/*************************** Validate() **************************/
-/*****************************************************************/
+/***** Validator() *****/
 
 // 未定义场景
 func Test_Valiadte_Undefined_Scence(t *testing.T) {
@@ -74,9 +71,7 @@ func Test_Valiadte_Undefined_Scence(t *testing.T) {
 	v.Validate(rulesEmpty, objEmpty, SCENCE)
 }
 
-/*****************************************************************/
-/*************************** dispatch() **************************/
-/*****************************************************************/
+/***** dispatch() *****/
 
 // 未定义验证器 Rule.Rule
 func Test_Dispatch_Undefined_Rule(t *testing.T) {
@@ -147,14 +142,12 @@ func Test_Dispatch_TypeErr_Attr(t *testing.T) {
 	v.Validate(rules, objEmpty, "create")
 }
 
-/*****************************************************************/
-/**************************** errors() ***************************/
-/*****************************************************************/
+/***** generator() *****/
 
 // 内置错误信息
 func Test_Generator_ErrorInfo(t *testing.T) {
 	rules := Rules{
-		"create" : {
+		"create": {
 			{Attr: "username", Rule: "required"},
 		},
 	}
@@ -169,7 +162,7 @@ func Test_Generator_ErrorInfo(t *testing.T) {
 // 自定义错误信息
 func Test_Generator_ErrorInfo_Custom(t *testing.T) {
 	rules := Rules{
-		"create" : {
+		"create": {
 			{Attr: "username", Rule: "required", Message: "用户名不能为空"},
 		},
 	}
@@ -180,74 +173,76 @@ func Test_Generator_ErrorInfo_Custom(t *testing.T) {
 	}
 }
 
-/*****************************************************************/
-/************************* Rule.Required *************************/
-/*****************************************************************/
+/***** AddValidator() *****/
 
-// 有值验证，Rule.Required == False(默认)，属性有值验证，无值跳过
-func Test_Required_False(t *testing.T) {
+// 自定义验证规则，规则名已存在
+func Test_AddValidator_Name_Already_Exists(t *testing.T) {
+	defer func() {
+		p := recover()
+		// toolbox.Dump(p) // validator named 'mobile' already exists
+		if p == nil {
+			fail(t, "validator named 'mobile' already exists")
+		}
+	}()
+	v.AddValidator("mobile", func(attr string, rule Rule, obj M) E {
+		return nil
+	})
+}
+
+// 自定义验证规则
+func add() {
+	name := "one"
+	if _, ok := v.validators[name]; !ok {
+		v.AddValidator(name, func(attr string, rule Rule, obj M) E {
+			if _, ok := obj[attr]; !ok {
+				if !rule.Required {	// 允许为空
+					return nil
+				}
+				return v.generator("required", attr, rule)
+			}
+			if obj[attr] != 1 {
+				return E{attr: errors.New(rule.Message)}
+			}
+			return nil
+		})
+	}
+}
+
+// 使用自定义验证规则
+func Test_AddValidator(t *testing.T) {
+	add()
+	// toolbox.Dump(v.validators)
+	message := "必须等于一"
 	rules := Rules{
-		"create" : {
-			{Attr: "username", Rule: "string"},
+		"create": {
+			{Attr: "field", Rule: "one", Message: message},
 		},
 	}
-	obj := map[string]interface{}{ "username": 123 }
-	message := generator(v.default_errors["string"], "username")
+	obj := map[string]interface{}{"field": 2}
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[username:username 必须是字符串]]
-	if len(e) == 0 || e[0]["username"].Error() != message{
+	// toolbox.Dump(e) // [map[field:必须等于一]]
+	if len(e) == 0 || e[0]["field"].Error() != message {
 		fail(t, "should print error(" + message + ")")
 	}
 }
 
-// 无值跳过
-func Test_Required_False_Empty(t *testing.T) {
+func Test_AddValidator_OK(t *testing.T) {
+	add()
+	// toolbox.Dump(v.validators)
 	rules := Rules{
-		"create" : {
-			{Attr: "username", Rule: "string"},
+		"create": {
+			{Attr: "field", Rule: "one", Message: "必须等于一"},
 		},
 	}
-	e := v.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e, len(e)) // [] 0
+	obj := map[string]interface{}{"field": 1}
+	e := v.Validate(rules, obj, "create")
+	// toolbox.Dump(e) // []
 	if len(e) != 0 {
 		fail(t, "should print nothing")
 	}
 }
 
-// 有值验证，Rule.Required == True，属性有值验证，无值返回 required 错误
-func Test_Required_True(t *testing.T) {
-	rules := Rules{
-		"create" : {
-			{Attr: "username", Rule: "string", Required: true},
-		},
-	}
-	obj := map[string]interface{}{ "username": 123 }
-	message := generator(v.default_errors["string"], "username")
-	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[username:username 必须是字符串]]
-	if len(e) == 0 || e[0]["username"].Error() != message{
-		fail(t, "should print error(" + message + ")")
-	}
-}
-
-// 无值抛错
-func Test_Required_True_Empty(t *testing.T) {
-	rules := Rules{
-		"create" : {
-			{Attr: "username", Rule: "string", Required: true},
-		},
-	}
-	message := generator(v.default_errors["required"], "username")
-	e := v.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e) // [map[username:username 不能为空]]
-	if len(e) == 0 || e[0]["username"].Error() != message {
-		fail(t, "should print error(" + message + ")")
-	}
-}
-
-/*****************************************************************/
-/***************************** Utils *****************************/
-/*****************************************************************/
+/***** utils *****/
 
 func generator(message, new string, placeholder ...interface{}) string {
 	e := strings.Replace(message, "{label}", new, -1)
