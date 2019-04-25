@@ -1,5 +1,5 @@
-// Package validator 实现了一个支持场景/国际化/自定义错误/自定义验证规则的 map[string]interface{} 元素批量验证器，意在支持各种框架的 model 层实现自动验证，亦可单独使用
-// 该验证器是逻辑验证器（float64(10)/int32(10) 均可被 intValidator 验证通过）而不是强类型验证器（如果需要强类型验证，可以自定义验证规则，或直接断言）
+// Package validator 实现了一个支持场景/国际化/自定义错误/自定义验证规则的 map[string]interface{} 元素批量验证器，意在支持各种框架的 model 层实现自动验证，亦可单独使用，
+// 该验证器是逻辑验证器（float64(10)/int32(10) 均可被 intValidator 验证通过）而不是强类型验证器（如果需要强类型验证，可以自定义验证规则，或直接断言），
 // 考虑到经过 encoding/json 解析后的数字类型均被解析为 float64，故强类型验证器不太可用，故如此设计，如需强类型验证，请使用 AddValidator 自行扩展
 package validator
 
@@ -37,13 +37,13 @@ type Rule struct {
 	// false(默认) - 有值验证/无值跳过(如果同时设置了 requiredValidator ，则报 required 错误，此时错误是由 requiredValidator 报出的)
 	// true - 有值验证/无值报 required 错误
 	Required bool
-	// 可选，符号限制，作用于 numberValidator、intValidator、floatValidator
+	// 可选，符号限制，作用于 numberValidator、integerValidator、decimalValidator
 	// 0(默认) - 正/负数，>0 - 正数(不包含0)，<0 - 负数(不包含0)
 	Symbol int64
-	// 可选，最大限制，作用于 stringValidator、numberValidator、intValidator、floatValidator
+	// 可选，最大限制，作用于 stringValidator、numberValidator、integerValidator、decimalValidator
 	// Max < Min 将 Panic
-	// 作用于 stringValidator、intValidator 只能是整数，其他将 panic
-	// 作用于 numberValidator、floatValidator 只能是整数或浮点数，其他将Panic
+	// 作用于 stringValidator、integerValidator 只能是整数，其他将 panic
+	// 作用于 numberValidator、decimalValidator 只能是整数或浮点数，其他将 panic
 	Max interface{}
 	// 可选，最小限制，同 Rule.Max
 	Min interface{}
@@ -60,16 +60,15 @@ type Scence string
 type ScenceRules []Rule
 
 // 验证规则集 - 所有场景
-//
 // var rules = Rules{
-// 	"create": {
-// 		{Attr: []string{"Username", "Password"}, Rule: "required", Message: "用户名或密码不能为空"},
-// 		{Attr: "Password", Rule: "string", Max: 18, Min: 6},
-// 		{Attr: "Age", Rule: "number", Required: true},
-// 	},
-// 	"get": {
-// 		{Attr: "Username", Rule: "required", Message: "{Label}不能为空"},
-// 	},
+//     "create": {
+//         {Attr: []string{"username", "password"}, Rule: "required", Message: "用户名或密码不能为空"},
+// 		   {Attr: "password", Rule: "string", Max: 18, Min: 6},
+// 		   {Attr: "age", Rule: "number", Required: true},
+//     },
+//     "get": {
+// 	       {Attr: "id", Rule: "int"},
+//     },
 // }
 type Rules map[Scence]ScenceRules
 
@@ -81,7 +80,6 @@ type E map[string]error
 // 验证器函数类型
 type F func(string, Rule, M) E
 
-// 私有，使用构造器初始化，方便链式调用
 type validator struct {
 	// 默认语言
 	lang string
@@ -89,7 +87,7 @@ type validator struct {
 	default_errors map[string]string
 	// 验证器
 	validators map[string]F
-	// 错误收集器
+	// 错误收信息
 	errors []E
 }
 
@@ -115,7 +113,7 @@ func (this *validator) Lang(lang string) *validator {
 	return this
 }
 
-// AddValidator 自定义验证器，新增验证规则，方便扩展
+// AddValidator 自定义验证器
 func (this *validator) AddValidator(name string, customValidator F) {
 	if _, ok := this.validators[name]; ok {
 		panic(errors.New("validator named '" + name + "' already exists"))
@@ -125,7 +123,7 @@ func (this *validator) AddValidator(name string, customValidator F) {
 
 // Validate 场景验证
 func (this *validator) Validate(rules Rules, obj M, scence Scence) []E {
-	// 清空 errors
+	// 初始化 errors
 	this.errors = make([]E, 0)
 	// 场景不存在
 	scenceRules, ok := rules[scence]
@@ -136,9 +134,6 @@ func (this *validator) Validate(rules Rules, obj M, scence Scence) []E {
 	for _, rule := range scenceRules {
 		this.dispatch(rule, obj)
 	}
-	// toolbox.Dump(this)
-	// toolbox.Dump(i18n.Errors)
-	// toolbox.Dump(this.errors)
 	return this.errors
 }
 
@@ -700,7 +695,7 @@ func (this *validator) ipValidator(attr string, rule Rule, obj M) E {
 // regexValidator 正则验证器
 func (this *validator) regexValidator(attr string, rule Rule, obj M) E {
 	pattern := rule.Pattern
-	if len(pattern) == 0 {
+	if pattern == "" {
 		panic(errors.New(fmt.Sprint(rule) + " attribute 'Pattern' not found or empty"))
 	}
 	// 必填检测
