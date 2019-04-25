@@ -71,15 +71,15 @@ func main() {
 ## 如何定义验证规则
 - validator.Scence string 场景
 - validator.Rule struct 规则
-	- Attr string
-	- Rule string
-	- Message string
-	- Required bool
-	- Symbol int64
-	- Max interface{}
-	- Min interface{}
-	- Enum []string
-	- Pattern string
+	- Attr     interface{}  必须，待验证属性，单个属性 string，多个属性 []string，其他类型或未定义将 panic
+	- Rule     string       必须，验证规则，即验证器，不存在的验证器或未定义将 panic
+	- Message  string       可选，自定义错误信息
+	- Required bool         可选，可空限制，作用于除 requiredValidator 外的所有验证器，false(默认) - 有值验证/无值跳过，true - 有值验证/无值报错
+	- Symbol   int64        可选，符号限制，作用于 numberValidator、integerValidator、decimalValidator，0(默认) - 正/负数，>0 - 正数(不包含0)，<0 - 负数(不包含0)
+	- Max      interface{}  可选，最大限制，作用于 stringValidator、numberValidator、integerValidator、decimalValidator
+	- Min      interface{}  可选，最小限制，同 Max
+	- Enum     []string     必选（inValidator），枚举限制，作用于 inValidator
+	- Pattern  string       必选（regexValidator），正则匹配模式，作用于 regexValidator
 - validator.ScenceRules []validator.Rule 验证规则集 - 单一场景
 - validator.Rules map[Scence]ScenceRules 验证规则集 - 所有场景
 ```go
