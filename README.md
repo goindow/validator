@@ -68,7 +68,29 @@ func main() {
 }
 ```
 
+## 如何定义验证规则
+- validator.Scence string 场景
+- validator.Rule struct 规则
+- validator.ScenceRules []validator.Rule 验证规则集 - 单一场景
+- validator.Rules map[Scence]ScenceRules 验证规则集 - 所有场景
+```go
+rules := validator.Rules{ // validator.Rules
+	"create": { // validators.ScenceRules
+		{ Attr: []string{"username", "password"}, Rule: "required" }, // validator.Rule
+		{ Attr: "password", Rule: "regex", Pattern: `[A-Z]{1}\w{5,}`, Message: "密码必须由大写字母开头"},
+		{ Attr: "gender", Rule: "in", Enum: []string{"0", "1"} },
+		{ Attr: "age", Rule: "int", Min: 18 },
+		{ Attr: "weight", Rule: "number", Symbol: 1 },
+		{ Attr: "email", Rule: "email" },
+	},
+	"read": {
+		{ Attr: "id", Rule: "int", Symbol: 1 },
+	},
+}
+```
+
 ## 国际化
+- Lang(lang string) *validator
 - 在 i18n 下，新建错误信息对应的语言文件，格式参考已有文件
 - 包本身自带两种语言(zh_cn、en_us)，默认语言为 zh_cn
 ```go
@@ -101,7 +123,7 @@ import (
 func main() {
 
 	// 自定义错误处理函数，函数类型为 validator.F
-	var customValidator validator.F = func(attr string, rule validator.Rule, obj validator.M) validator.E {
+	var oneValidator validator.F = func(attr string, rule validator.Rule, obj validator.M) validator.E {
 		if _, ok := obj[attr]; !ok {
 			return validator.E{attr: errors.New("not found")}
 		}
@@ -118,7 +140,7 @@ func main() {
 	v := validator.New()
 
 	// 挂载
-	v.AddValidator("one", customValidator)
+	v.AddValidator("one", oneValidator)
 
 	// 使用
 	user := map[string]interface{}{
