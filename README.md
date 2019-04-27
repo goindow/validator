@@ -23,80 +23,80 @@ go get github.com/goindow/validator
 package main
 
 import (
-	"github.com/goindow/validator"
-	"fmt"
+    "github.com/goindow/validator"
+    "fmt"
 )
 
 func main() {
-	user := map[string]interface{}{
-		// "username": "hyb",
-		"password": "******",
-		"gender": "male",
-		"age": 17,
-		"weight": "53kg",
-		"email": "hyb76788424#163.com",
-	}
+    user := map[string]interface{}{
+        // "username": "hyb",
+        "password": "******",
+        "gender": "male",
+        "age": 17,
+        "weight": "53kg",
+        "email": "hyb76788424#163.com",
+    }
 
-	rules := validator.Rules{
-		"create": {
-			{ Attr: []string{"username", "password"}, Rule: "required" },
-			{ Attr: "password", Rule: "regex", Pattern: `[A-Z]{1}\w{5,}`, Message: "密码必须由大写字母开头"},
-			{ Attr: "gender", Rule: "in", Enum: []string{"0", "1"} },
-			{ Attr: "age", Rule: "int", Min: 18 },
-			{ Attr: "weight", Rule: "number", Symbol: 1 },
-			{ Attr: "email", Rule: "email" },
-		},
-		"read": {
-			{ Attr: "id", Rule: "int", Symbol: 1 },
-		},
-	}
+    rules := validator.Rules{
+        "create": {
+            { Attr: []string{"username", "password"}, Rule: "required" },
+            { Attr: "password", Rule: "regex", Pattern: `[A-Z]{1}\w{5,}`, Message: "密码必须由大写字母开头"},
+            { Attr: "gender", Rule: "in", Enum: []string{"0", "1"} },
+            { Attr: "age", Rule: "int", Min: 18 },
+            { Attr: "weight", Rule: "number", Symbol: 1 },
+            { Attr: "email", Rule: "email" },
+        },
+        "read": {
+            { Attr: "id", Rule: "int", Symbol: 1 },
+        },
+    }
 
-	if e := validator.New().Validate(rules, user, "create"); e != nil {
-		// todo: handle errors
-		for _, i := range e {
-			for k, v := range i {
-				fmt.Printf("%v => %v\n", k, v)
-			}
-		}
-		// username => username 不能为空
-		// password => 密码必须由大写字母开头
-		// gender => gender 只能是 [0、1] 中的一个
-		// age => age 必须是不小于 18 的整数
-		// weight => weight 必须是数字
-		// email => 无效的 email
-	}
-	// todo: do something
+    if e := validator.New().Validate(rules, user, "create"); e != nil {
+        // todo: handle errors
+        for _, i := range e {
+            for k, v := range i {
+                fmt.Printf("%v => %v\n", k, v)
+            }
+        }
+        // username => username 不能为空
+        // password => 密码必须由大写字母开头
+        // gender => gender 只能是 [0、1] 中的一个
+        // age => age 必须是不小于 18 的整数
+        // weight => weight 必须是数字
+        // email => 无效的 email
+    }
+    // todo: do something
 }
 ```
 
 ## 如何定义验证规则
 - ***validator.Rule*** struct 验证规则
-	- ***Attr***        interface{}    **必选**，待验证属性，单个属性 string，多个属性 []string，其他类型或未定义将 panic
-	- ***Rule***        string         **必选**，验证规则，即验证器，不存在的验证器或未定义将 panic
-	- ***Message***     string         **可选**，自定义错误信息
-	- ***Required***    bool           **可选**，可空限制，作用于除 requiredValidator 外的所有验证器，false(默认) - 有值验证/无值跳过，true - 有值验证/无值报错
-	- ***Symbol***      int64          **可选**，符号限制，作用于 numberValidator、integerValidator、decimalValidator，0(默认) - 正/负数，>0 - 正数(不包含0)，<0 - 负数(不包含0)
-	- ***Max***         interface{}    **可选**，最大限制，作用于 stringValidator、numberValidator、integerValidator、decimalValidator
-	- ***Min***         interface{}    **可选**，最小限制，同 Max
-	- ***Enum***        []string       **必选**（inValidator）**，枚举限制，作用于 inValidator
-	- ***Pattern***     string         **必选**（regexValidator）**，正则匹配模式，作用于 regexValidator
+    - ***Attr***        interface{}    **必选**，待验证属性，单个属性 string，多个属性 []string，其他类型或未定义将 panic
+    - ***Rule***        string         **必选**，验证规则，即验证器，不存在的验证器或未定义将 panic
+    - ***Message***     string         **可选**，自定义错误信息
+    - ***Required***    bool           **可选**，可空限制，作用于除 requiredValidator 外的所有验证器，false(默认) - 有值验证/无值跳过，true - 有值验证/无值报错
+    - ***Symbol***      int64          **可选**，符号限制，作用于 numberValidator、integerValidator、decimalValidator，0(默认) - 正/负数，>0 - 正数(不包含0)，<0 - 负数(不包含0)
+    - ***Max***         interface{}    **可选**，最大限制，作用于 stringValidator、numberValidator、integerValidator、decimalValidator
+    - ***Min***         interface{}    **可选**，最小限制，同 Max
+    - ***Enum***        []string       **必选**（inValidator）**，枚举限制，作用于 inValidator
+    - ***Pattern***     string         **必选**（regexValidator）**，正则匹配模式，作用于 regexValidator
 - ***validator.Scence*** string 场景
 - ***validator.ScenceRules*** []validator.Rule 验证规则集 - 单一场景
 - ***validator.Rules map[Scence]ScenceRules*** 验证规则集 - 所有场景
 ```go
 rules := validator.Rules{ // validator.Rules
-	// validator.ScenceRules
-	"create": { // validator.Scence
-		{ Attr: []string{"username", "password"}, Rule: "required" }, // validator.Rule
-		{ Attr: "password", Rule: "regex", Pattern: `[A-Z]{1}\w{5,}`, Message: "密码必须由大写字母开头"},
-		{ Attr: "gender", Rule: "in", Enum: []string{"0", "1"} },
-		{ Attr: "age", Rule: "int", Min: 18 },
-		{ Attr: "weight", Rule: "number", Symbol: 1 },
-		{ Attr: "email", Rule: "email" },
-	},
-	"read": {
-		{ Attr: "id", Rule: "int", Symbol: 1 },
-	},
+    // validator.ScenceRules
+    "create": { // validator.Scence
+        { Attr: []string{"username", "password"}, Rule: "required" }, // validator.Rule
+        { Attr: "password", Rule: "regex", Pattern: `[A-Z]{1}\w{5,}`, Message: "密码必须由大写字母开头"},
+        { Attr: "gender", Rule: "in", Enum: []string{"0", "1"} },
+        { Attr: "age", Rule: "int", Min: 18 },
+        { Attr: "weight", Rule: "number", Symbol: 1 },
+        { Attr: "email", Rule: "email" },
+    },
+    "read": {
+        { Attr: "id", Rule: "int", Symbol: 1 },
+    },
 }
 ```
 
@@ -112,9 +112,9 @@ v := validator.New().Lang("en_us")
 - Rule.Message string
 ```go
 rules := validator.Rules{
-	"create": {
-		{ Attr: "password", Rule: "regex", Pattern: `[A-Z]{1}\w{5,}`, Message: "密码必须由大写字母开头"},
-	}
+    "create": {
+        { Attr: "password", Rule: "regex", Pattern: `[A-Z]{1}\w{5,}`, Message: "密码必须由大写字母开头"},
+    }
 }
 ```
 
@@ -124,44 +124,44 @@ rules := validator.Rules{
 package main
 
 import (
-	"github.com/goindow/validator"
-	"errors"
-	"fmt"
+    "github.com/goindow/validator"
+    "errors"
+    "fmt"
 )
 
 func main() {
-	v := validator.New()
+    v := validator.New()
 
-	// 自定义错误处理函数，函数类型为 validator.F
-	var oneValidator validator.F = func(attr string, rule validator.Rule, obj validator.M) validator.E {
-		if _, ok := obj[attr]; !ok {
-			return validator.E{attr: errors.New("not found")}
-		}
-		if obj[attr] != 1 {
-			e := rule.Message
-			if e == "" {
-				e = "必须等于一"
-			}
-			return validator.E{attr: errors.New(e)}	
-		}
-		return nil
-	}
+    // 自定义错误处理函数，函数类型为 validator.F
+    var oneValidator validator.F = func(attr string, rule validator.Rule, obj validator.M) validator.E {
+        if _, ok := obj[attr]; !ok {
+            return validator.E{attr: errors.New("not found")}
+        }
+        if obj[attr] != 1 {
+            e := rule.Message
+            if e == "" {
+                e = "必须等于一"
+            }
+            return validator.E{attr: errors.New(e)} 
+        }
+        return nil
+    }
 
-	// 挂载
-	v.AddValidator("one", oneValidator)
+    // 挂载
+    v.AddValidator("one", oneValidator)
 
-	// 使用
-	user := map[string]interface{}{
-		"name": "hyb",
-	}
-	rules := validator.Rules{
-		"someone": {
-			{Attr: "name", Rule: "one"},
-		},
-	}
-	e := v.Validate(rules, user, "someone")
-	fmt.Println(e)
-	// [map[name:必须等于一]]
+    // 使用
+    user := map[string]interface{}{
+        "name": "hyb",
+    }
+    rules := validator.Rules{
+        "someone": {
+            {Attr: "name", Rule: "one"},
+        },
+    }
+    e := v.Validate(rules, user, "someone")
+    fmt.Println(e)
+    // [map[name:必须等于一]]
 }
 ```
 
