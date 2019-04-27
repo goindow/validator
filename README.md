@@ -182,13 +182,14 @@ func main() {
 
 
 ### requiredValidator
+- 必填
 - Rule.Rule        string      必选    required
 ```go
 rule := {Attr: []string{"username", "password"}, Rule: "required"}
 ```
 
 ### inValidator
-- 被验证字段支持类型 int64、int32、int16、int8、int、float64、float32、string、bool
+- 枚举，被验证字段支持类型 int64、int32、int16、int8、int、float64、float32、string、bool
 - Rule.Rule        string      必选    in
 - Rule.Required    bool        可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 - Rule.Enum        []string    必选    被验证字段必须在 Rule.Enum 中
@@ -198,6 +199,7 @@ rule := {Attr: "gender", Rule: "in", Enum: {"male", "female", "unknown"}, Requir
 ```
 
 ### stringValidator
+- 字符串
 - Rule.Rule        string    必选    string
 - Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 - Rule.Max         int       可选    被验证字段长度不能大于 Rule.Max
@@ -210,7 +212,7 @@ rule := {Attr: "name", Rule: "string", Min: 6, Max: 18, required: true}
 ```
 
 ### integerValidator
-- 被验证字段支持类型 int64、int32、int16、int8、int、float64、float32、string
+- 整数，被验证字段支持类型 int64、int32、int16、int8、int、float64、float32、string
 - Rule.Rule        string    必选    integer/int
 - Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 - Rule.Symbol      int64     可选    0(默认) - 正/负数，>0 - 正数(不包含0)，<0 - 负数(不包含0)
@@ -228,7 +230,7 @@ rule := {Attr: "age", Rule: "integer", Min: 18, Max: 35, required: true}
 ```
 
 ### decimalValidator
-- 被验证字段支持类型 float64、float32、string
+- 小数，被验证字段支持类型 float64、float32、string
 - Rule.Rule        string         必选    decimal/float
 - Rule.Required    bool           可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 - Rule.Symbol      int64          可选    0(默认) - 正/负数，>0 - 正数(不包含0)，<0 - 负数(不包含0)
@@ -246,7 +248,7 @@ rule := {Attr: "field", Rule: "decimal", Min: 3, Max: 3.14, required: true}
 ```
 
 ### numberValidator
-- 被验证字段支持类型 int64、int32、int16、int8、int、float64、float32、string
+- 数字，被验证字段支持类型 int64、int32、int16、int8、int、float64、float32、string
 - Rule.Rule        string         必选    number
 - Rule.Required    bool           可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 - Rule.Symbol      int64          可选    0(默认) - 正/负数，>0 - 正数(不包含0)，<0 - 负数(不包含0)
@@ -261,7 +263,7 @@ rule := {Attr: "weight", Rule: "number", Min: 45, Max: 49.9, required: true}
 ```
 
 ### booleanValidator
-- 被验证字段支持类型 bool、string
+- 布尔，被验证字段支持类型 bool、string
 - Rule.Rule        string    必选    boolean/bool
 - Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 ```go
@@ -273,6 +275,7 @@ rule := {Attr: "admin", Rule: "boolean"}
 ```
 
 ### ipValidator
+- ipv4/ipv6，被验证字段支持类型 string
 - Rule.Rule        string    必选    ip
 - Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 ```go
@@ -280,7 +283,7 @@ rule := {Attr: "ip", Rule: "ip"}
 ```
 
 ### regexValidator
-- 被验证字段支持类型 string
+- 正则，被验证字段支持类型 string
 - Rule.Rule        string    必选    regex
 - Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 - Rule.Pattern     string    必选    正则模式字符串
@@ -289,7 +292,7 @@ rule := {Attr: "password", Rule: "regex", Pattern: `[A-Z]{1}\w{5,}`},
 ```
 
 ### emailValidator
-- 被验证字段支持类型 string
+- email，被验证字段支持类型 string
 - Rule.Rule        string    必选    email
 - Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 ```go
@@ -299,7 +302,7 @@ rule := {Attr: "email", Rule: "email"}
 ```
 
 ### telValidator
-- 被验证字段支持类型 string
+- 中国大陆座机号，被验证字段支持类型 string
 - Rule.Rule        string    必选    tel
 - Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 ```go
@@ -309,7 +312,7 @@ rule := {Attr: "tel", Rule: "tel"}
 ```
 
 ### mobileValidator
-- 被验证字段支持类型 string
+- 中国大陆手机号，被验证字段支持类型 string
 - Rule.Rule        string    必选    mobile
 - Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 ```go
@@ -319,7 +322,7 @@ rule := {Attr: "mobile", Rule: "mobile"}
 ```
 
 ### zipcodeValidator
-- 被验证字段支持类型 string
+- 中国大陆邮编，被验证字段支持类型 string
 - Rule.Rule        string    必选    zipcode
 - Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 ```go
