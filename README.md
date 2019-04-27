@@ -166,7 +166,7 @@ func main() {
 ```
 
 ## 内置验证器
-- [requiredValidator](#requiredValidator（必填）)
+- [requiredValidator（必填）](#requiredValidator（必填）)
 - [inValidator](#inValidator（枚举）)
 - [stringValidator](#stringValidator（字符串）)
 - [integerValidator](#integerValidator（整数）)
