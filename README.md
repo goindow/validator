@@ -69,8 +69,7 @@ func main() {
 ```
 
 ## 如何定义验证规则
-- validator.Scence string 场景
-- validator.Rule struct 规则
+- validator.Rule struct 验证规则
 	- Attr     interface{}  必须，待验证属性，单个属性 string，多个属性 []string，其他类型或未定义将 panic
 	- Rule     string       必须，验证规则，即验证器，不存在的验证器或未定义将 panic
 	- Message  string       可选，自定义错误信息
@@ -80,11 +79,13 @@ func main() {
 	- Min      interface{}  可选，最小限制，同 Max
 	- Enum     []string     必选（inValidator），枚举限制，作用于 inValidator
 	- Pattern  string       必选（regexValidator），正则匹配模式，作用于 regexValidator
+- validator.Scence string 场景
 - validator.ScenceRules []validator.Rule 验证规则集 - 单一场景
 - validator.Rules map[Scence]ScenceRules 验证规则集 - 所有场景
 ```go
 rules := validator.Rules{ // validator.Rules
-	"create": { // validators.ScenceRules
+	// validators.ScenceRules
+	"create": { // validators.Scence
 		{ Attr: []string{"username", "password"}, Rule: "required" }, // validator.Rule
 		{ Attr: "password", Rule: "regex", Pattern: `[A-Z]{1}\w{5,}`, Message: "密码必须由大写字母开头"},
 		{ Attr: "gender", Rule: "in", Enum: []string{"0", "1"} },
@@ -100,11 +101,9 @@ rules := validator.Rules{ // validator.Rules
 
 ## 国际化
 - Lang(lang string) *validator
-- 在 i18n 下，新建错误信息对应的语言文件，格式参考已有文件
-- 包本身自带两种语言(zh_cn、en_us)，默认语言为 zh_cn
+- 在 i18n 下，新建错误信息对应的语言文件，格式参考已有文件，包本身自带两种语言(zh_cn、en_us)，默认语言为 zh_cn
 ```go
 // touch ./i18n/en_us.go
-
 v := validator.New().Lang("en_us")
 ```
 
@@ -130,6 +129,7 @@ import (
 )
 
 func main() {
+	v := validator.New()
 
 	// 自定义错误处理函数，函数类型为 validator.F
 	var oneValidator validator.F = func(attr string, rule validator.Rule, obj validator.M) validator.E {
@@ -145,8 +145,6 @@ func main() {
 		}
 		return nil
 	}
-
-	v := validator.New()
 
 	// 挂载
 	v.AddValidator("one", oneValidator)
@@ -168,10 +166,164 @@ func main() {
 
 ## 内置验证器
 - [requiredValidator](#requiredValidator)
+- [inValidator](#inValidator)
+- [stringValidator](#stringValidator)
+- [integerValidator](#integerValidator)
+- [decimalValidator](#decimalValidator)
+- [numberValidator](#numberValidator)
+- [booleanValidator](#booleanValidator)
+- [ipValidator](#ipValidator)
+- [regexValidator](#regexValidator)
+- [emailValidator](#emailValidator)
+- [teldValidator](#teldValidator)
+- [mobileValidator](#mobileValidator)
+- [zipcodeValidator](#zipcodeValidator)
 
 
-### requiredValidator
-- 必填验证器
+### requiredValidator（必填）
+- Rule.Rule        string      必选    required
 ```go
-rule := {Attr: "field", Rule: "Required"}
+rule := {Attr: []string{"username", "password"}, Rule: "required"}
+```
+
+### inValidator（枚举）
+- 被验证字段支持类型 int64、int32、int16、int8、int、float64、float32、string、bool
+- Rule.Rule        string      必选    in
+- Rule.Required    bool        可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
+- Rule.Enum        []string    必须    被验证字段必须在 Rule.Enum 中
+```go
+rule := {Attr: "gender", Rule: "in", Enum: {"male", "female", "unknown"}}
+rule := {Attr: "gender", Rule: "in", Enum: {"male", "female", "unknown"}, Required: true} // 有值验证，无值跳过
+```
+
+### stringValidator（字符串）
+- Rule.Rule        string    必选    string
+- Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
+- Rule.Max         int       可选    被验证字段长度不能大于 Rule.Max
+- Rule.Min         in        可选    被验证字段长度不能小于 Rule.Min
+```go
+rule := {Attr: "name", Rule: "string"}
+rule := {Attr: "name", Rule: "string", Min: 6} // utf8 字符数，即字符串长度，兼容中文
+rule := {Attr: "name", Rule: "string", Min: 6, Max: 18}
+rule := {Attr: "name", Rule: "string", Min: 6, Max: 18, required: true}
+```
+
+### integerValidator（整数）
+- 被验证字段支持类型 int64、int32、int16、int8、int、float64、float32、string
+- Rule.Rule        string    必选    integer/int
+- Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
+- Rule.Symbol      int64     可选    0(默认) - 正/负数，>0 - 正数(不包含0)，<0 - 负数(不包含0)
+- Rule.Max         int       可选    被验证字段大小不能大于 Rule.Max
+- Rule.Min         int       可选    被验证字段大小不能小于 Rule.Min
+```go
+// int 为 integer 的别名，都指向 integerValidator 验证器
+rule := {Attr: "age", Rule: "int"}
+rule := {Attr: "age", Rule: "integer", Symobl: 1} // 正整数
+rule := {Attr: "age", Rule: "integer", Min: 18}
+rule := {Attr: "age", Rule: "integer", Min: 18, Max: 18} // == 18
+rule := {Attr: "age", Rule: "integer", Min: 18, Max: 35, required: true}
+
+// float64(18)、float32(18)、"18" 都会被认为是整数
+```
+
+### decimalValidator（小数）
+- 被验证字段支持类型 float64、float32、string
+- Rule.Rule        string         必选    decimal/float
+- Rule.Required    bool           可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
+- Rule.Symbol      int64          可选    0(默认) - 正/负数，>0 - 正数(不包含0)，<0 - 负数(不包含0)
+- Rule.Max         int|float64    可选    被验证字段大小不能大于 Rule.Max
+- Rule.Min         int|float64    可选    被验证字段大小不能小于 Rule.Min
+```go
+// float 为 decimal 的别名，都指向 decimalValidator 验证器
+rule := {Attr: "field", Rule: "float"}
+rule := {Attr: "field", Rule: "decimal", Symobl: -1} // 负小数
+rule := {Attr: "field", Rule: "decimal", Min: 2}
+rule := {Attr: "field", Rule: "decimal", Min: 3.14, Max: 3.14} // == 3.14
+rule := {Attr: "field", Rule: "decimal", Min: 3, Max: 3.14, required: true}
+
+// float64(18)、float32(18)、"18" 没有小数位会验证失败
+```
+
+### numberValidator（数字|整数/小数）
+- 被验证字段支持类型 int64、int32、int16、int8、int、float64、float32、string
+- Rule.Rule        string         必选    number
+- Rule.Required    bool           可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
+- Rule.Symbol      int64          可选    0(默认) - 正/负数，>0 - 正数(不包含0)，<0 - 负数(不包含0)
+- Rule.Max         int|float64    可选    被验证字段大小不能大于 Rule.Max
+- Rule.Min         int|float64    可选    被验证字段大小不能小于 Rule.Min
+```go
+rule := {Attr: "weight", Rule: "number"}
+rule := {Attr: "weight", Rule: "number", Symobl: 1}
+rule := {Attr: "weight", Rule: "number", Min: 45}
+rule := {Attr: "weight", Rule: "number", Min: 45, Max: 45} // == 45
+rule := {Attr: "weight", Rule: "number", Min: 45, Max: 49.9, required: true}
+```
+
+### booleanValidator（布尔）
+- 被验证字段支持类型 bool、string
+- Rule.Rule        string    必选    boolean/bool
+- Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
+```go
+// bool 为 boolean 的别名，都指向 booleanValidator 验证器
+rule := {Attr: "admin", Rule: "bool"}
+rule := {Attr: "admin", Rule: "boolean"}
+
+// 布尔值[true、false]、字符串表示的布尔值["1"、"0"、"t"、"f"、"true"、"false"(忽略大小写)] 都会被认为是布尔
+```
+
+### ipValidator（ipv4/ipv6）
+- Rule.Rule        string    必选    ip
+- Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
+```go
+rule := {Attr: "ip", Rule: "ip"}
+```
+
+### regexValidator（正则）
+- 被验证字段支持类型 string
+- Rule.Rule        string    必选    regex
+- Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
+- Rule.Pattern     string    必选    正则模式字符串
+```go
+rule := {Attr: "password", Rule: "regex", Pattern: `[A-Z]{1}\w{5,}`},
+```
+
+### emailValidator（邮箱）
+- 被验证字段支持类型 string
+- Rule.Rule        string    必选    email
+- Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
+```go
+rule := {Attr: "email", Rule: "email"}
+
+// pattern = `^[\w!#$%&'*+/=?^_` + "`" + `{|}~-]+(?:\.[\w!#$%&'*+/=?^_` + "`" + `{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[a-zA-Z0-9](?:[\w-]*[\w])?$`
+```
+
+### telValidator（中国大陆座机号）
+- 被验证字段支持类型 string
+- Rule.Rule        string    必选    tel
+- Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
+```go
+rule := {Attr: "tel", Rule: "tel"}
+
+// pattern = `^(0\d{2,3}(\-)?)?\d{7,8}$`
+```
+
+### mobileValidator（中国大陆手机号）
+
+- 被验证字段支持类型 string
+- Rule.Rule        string    必选    mobile
+- Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
+```go
+rule := {Attr: "mobile", Rule: "mobile"}
+
+// pattern = `^((\+86)|(86))?(1(([35][0-9])|[8][0-9]|[7][01356789]|[4][579]))\d{8}$`
+```
+
+### zipcodeValidator（中国大陆邮编）
+- 被验证字段支持类型 string
+- Rule.Rule        string    必选    zipcode
+- Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
+```go
+rule := {Attr: "zipcode", Rule: "zipcode"}
+
+// pattern = `^[1-9]\d{5}$`
 ```
