@@ -229,7 +229,7 @@ func (this *validator) mount() {
 	}
 }
 
-// requiredValidator 必填验证器
+// requiredValidator 必填
 func (this *validator) requiredValidator(attr string, rule Rule, obj M) E {
 	if _, ok := obj[attr]; ok {
 		return nil
@@ -237,7 +237,7 @@ func (this *validator) requiredValidator(attr string, rule Rule, obj M) E {
 	return this.generator("required", attr, rule)
 }
 
-// inValidator 枚举验证器
+// inValidator 枚举
 // 支持类型 int64、int32、int16、int8、int、float64、float32、string、bool
 // Rule.Required    bool        可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 // Rule.Enum        []string    必须    被验证字段必须在 Rule.Enum 中
@@ -290,7 +290,7 @@ func (this *validator) inValidator(attr string, rule Rule, obj M) E {
 	return nil
 }
 
-// stringValidator 字符串验证器
+// stringValidator 字符串
 // Rule.Required    bool    可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 // Rule.Max         int     可选    被验证字段长度不能大于 Rule.Max
 // Rule.Min         in      可选    被验证字段长度不能小于 Rule.Min
@@ -338,7 +338,7 @@ func (this *validator) stringValidator(attr string, rule Rule, obj M) E {
 	return nil
 }
 
-// intValidator 整数验证器（整数/无小数位的浮点数/整数字符串）
+// intValidator 整数（整数/无小数位的浮点数/整数字符串）
 // 支持类型 int64、int32、int16、int8、int、float64、float32、string
 // Rule.Required    bool     可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 // Rule.Symbol      int64    可选    0(默认) - 正/负数，>0 - 正数(不包含0)，<0 - 负数(不包含0)
@@ -439,7 +439,7 @@ func (this *validator) integerValidator(attr string, rule Rule, obj M) E {
 	return nil
 }
 
-// decimalValidator 小数验证器（有小数位的浮点数/有小数位的浮点数字符串）
+// decimalValidator 小数（有小数位的浮点数/有小数位的浮点数字符串）
 // 支持类型 float64、float32、string
 // Rule.Required    bool           可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 // Rule.Symbol      int64          可选    0(默认) - 正/负数，>0 - 正数(不包含0)，<0 - 负数(不包含0)
@@ -540,7 +540,7 @@ func (this *validator) decimalValidator(attr string, rule Rule, obj M) E {
 	return nil
 }
 
-// numberValidator 数字验证器（整数/浮点数/数字字符串）
+// numberValidator 数字（整数/浮点数/数字字符串）
 // 支持类型 int64、int32、int16、int8、int、float64、float32、string
 // Rule.Required    bool           可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 // Rule.Symbol      int64          可选    0(默认) - 正/负数，>0 - 正数(不包含0)，<0 - 负数(不包含0)
@@ -647,7 +647,7 @@ func (this *validator) numberValidator(attr string, rule Rule, obj M) E {
 	return nil
 }
 
-// boolValidator 布尔验证器（布尔值/字符串表示的布尔值[1、0、t、f、true、false(忽略大小写)]）
+// boolValidator 布尔（布尔值/字符串表示的布尔值[1、0、t、f、true、false(忽略大小写)]）
 // 支持类型 bool、string
 // Rule.Required    bool    可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 func (this *validator) booleanValidator(attr string, rule Rule, obj M) E {
@@ -672,7 +672,7 @@ func (this *validator) booleanValidator(attr string, rule Rule, obj M) E {
 	return nil
 }
 
-// ipValidator ip 验证器
+// ipValidator ipv4/ipv6
 func (this *validator) ipValidator(attr string, rule Rule, obj M) E {
 	// 必填检测
 	if _, ok := obj[attr]; !ok {
@@ -692,7 +692,9 @@ func (this *validator) ipValidator(attr string, rule Rule, obj M) E {
 	return nil
 }
 
-// regexValidator 正则验证器
+// regexValidator 正则
+// Rule.Required    bool      可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
+// Rule.Pattern     string    必选    正则模式字符串
 func (this *validator) regexValidator(attr string, rule Rule, obj M) E {
 	pattern := rule.Pattern
 	if pattern == "" {
@@ -717,28 +719,32 @@ func (this *validator) regexValidator(attr string, rule Rule, obj M) E {
 	return nil
 }
 
-// emailValidator 邮箱验证器
+// emailValidator 邮箱
+// Rule.Required    bool    可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 func (this *validator) emailValidator(attr string, rule Rule, obj M) E {
 	rule.Rule = "email" // 为防止使用验证器的别名导致内置错误找不到，这里重新赋值
 	rule.Pattern = PATTERN_EMAIL
 	return this.regexValidator(attr, rule, obj)
 }
 
-// mobileValidator 中国大陆座机号验证器
+// mobileValidator 中国大陆座机号
+// Rule.Required    bool    可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 func (this *validator) telValidator(attr string, rule Rule, obj M) E {
 	rule.Rule = "tel"
 	rule.Pattern = PATTERN_TEL
 	return this.regexValidator(attr, rule, obj)
 }
 
-// mobileValidator 中国大陆手机号验证器
+// mobileValidator 中国大陆手机号
+// Rule.Required    bool    可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 func (this *validator) mobileValidator(attr string, rule Rule, obj M) E {
 	rule.Rule = "mobile"
 	rule.Pattern = PATTERN_MOBILE
 	return this.regexValidator(attr, rule, obj)
 }
 
-// mobileValidator 中国大陆邮编验证器
+// mobileValidator 中国大陆邮编
+// Rule.Required    bool    可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 func (this *validator) zipcodeValidator(attr string, rule Rule, obj M) E {
 	rule.Rule = "zipcode"
 	rule.Pattern = PATTERN_ZIPCODE
