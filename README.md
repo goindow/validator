@@ -180,7 +180,6 @@ func main() {
 - [mobileValidator](#mobileValidator)
 - [zipcodeValidator](#zipcodeValidator)
 
-
 ### requiredValidator
 - 必填
 - Rule.Rule        string      必选    required
