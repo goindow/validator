@@ -176,7 +176,7 @@ func main() {
 - [ipValidator](#ipValidator)
 - [regexValidator](#regexValidator)
 - [emailValidator](#emailValidator)
-- [teldValidator](#teldValidator)
+- [telValidator](#telValidator)
 - [mobileValidator](#mobileValidator)
 - [zipcodeValidator](#zipcodeValidator)
 
