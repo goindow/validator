@@ -2,8 +2,9 @@
 Package validator 实现了一个支持场景/国际化/自定义错误/自定义验证规则的 map[string]interface{} 元素批量验证器，意在支持各种框架的 model 层实现自动验证，亦可单独使用
 
 ## 说明
-- 该验证器是逻辑验证器（float64(10)/int32(10) 均可被 intValidator 验证通过）而不是强类型验证器（如果需要强类型验证，可以自定义验证规则，或直接断言），
-- 考虑到经过 encoding/json 解析后的数字类型均被解析为 float64，强类型验证器不太可用，故此设计，如需强类型验证，请使用 AddValidator 自行扩展
+- 该验证器是**逻辑验证器**（float64(10)/int32(10)/"10" 均可被 intValidator 验证通过）而不是*强类型验证器*
+- 考虑到经过 encoding/json 解析后的数字类型均被解析为 float64，强类型验证器不太可用，故此设计
+- 如果需要强类型验证，可以使用 AddValidator 自行扩展，或直接断言
 
 ## 特性
 - 支持场景
@@ -165,19 +166,19 @@ func main() {
 ```
 
 ## 内置验证器
-- [requiredValidator](#requiredValidator)
-- [inValidator](#inValidator)
-- [stringValidator](#stringValidator)
-- [integerValidator](#integerValidator)
-- [decimalValidator](#decimalValidator)
-- [numberValidator](#numberValidator)
-- [booleanValidator](#booleanValidator)
-- [ipValidator](#ipValidator)
-- [regexValidator](#regexValidator)
-- [emailValidator](#emailValidator)
-- [teldValidator](#teldValidator)
-- [mobileValidator](#mobileValidator)
-- [zipcodeValidator](#zipcodeValidator)
+- [requiredValidator](#requiredValidator（必填）)
+- [inValidator](#inValidator（枚举）)
+- [stringValidator](#stringValidator（字符串）)
+- [integerValidator](#integerValidator（整数）)
+- [decimalValidator](#decimalValidator（小数）)
+- [numberValidator](#numberValidator（数字）)
+- [booleanValidator](#booleanValidator（布尔）)
+- [ipValidator](#ipValidator（ipv4/ipv6）)
+- [regexValidator](#regexValidator（正则）)
+- [emailValidator](#emailValidator（邮箱）)
+- [teldValidator](#teldValidator（中国大陆座机号）)
+- [mobileValidator](#mobileValidator（中国大陆手机号）)
+- [zipcodeValidator](#zipcodeValidator（中国大陆邮编）)
 
 
 ### requiredValidator（必填）
@@ -190,7 +191,7 @@ rule := {Attr: []string{"username", "password"}, Rule: "required"}
 - 被验证字段支持类型 int64、int32、int16、int8、int、float64、float32、string、bool
 - Rule.Rule        string      必选    in
 - Rule.Required    bool        可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
-- Rule.Enum        []string    必须    被验证字段必须在 Rule.Enum 中
+- Rule.Enum        []string    必选    被验证字段必须在 Rule.Enum 中
 ```go
 rule := {Attr: "gender", Rule: "in", Enum: {"male", "female", "unknown"}}
 rule := {Attr: "gender", Rule: "in", Enum: {"male", "female", "unknown"}, Required: true} // 有值验证，无值跳过
