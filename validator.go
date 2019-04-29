@@ -61,16 +61,6 @@ type Scence string
 type ScenceRules []Rule
 
 // 验证规则集 - 所有场景
-// var rules = Rules{
-//     "create": {
-//         {Attr: []string{"username", "password"}, Rule: "required", Message: "用户名或密码不能为空"},
-//         {Attr: "password", Rule: "string", Max: 18, Min: 6},
-//         {Attr: "age", Rule: "number", Required: true},
-//     },
-//     "get": {
-//         {Attr: "id", Rule: "int"},
-//     },
-// }
 type Rules map[Scence]ScenceRules
 
 type M map[string]interface{}
