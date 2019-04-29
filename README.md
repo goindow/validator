@@ -193,8 +193,8 @@ rule := {Attr: []string{"username", "password"}, Rule: "required"}
 - Rule.Required    bool        可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 - Rule.Enum        []string    必选    被验证字段必须在 Rule.Enum 中
 ```go
-rule := {Attr: "gender", Rule: "in", Enum: {"male", "female", "unknown"}}
-rule := {Attr: "gender", Rule: "in", Enum: {"male", "female", "unknown"}, Required: true} // 有值验证，无值跳过
+rule := {Attr: "gender", Rule: "in", Enum: {"male", "female", "unknown"}} // 默认，所有规则，有值验证，无值跳过
+rule := {Attr: "gender", Rule: "in", Enum: {"male", "female", "unknown"}, Required: true} // 有值验证，无值报 required 错误
 ```
 
 ### stringValidator
