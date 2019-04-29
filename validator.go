@@ -5,15 +5,15 @@
 package validator
 
 import (
-    "errors"
     "fmt"
-    "github.com/goindow/validator/i18n"
     "net"
-    "reflect"
+    "errors"
     "regexp"
+    "reflect"
     "strconv"
     "strings"
     "unicode/utf8"
+    "github.com/goindow/validator/i18n"
     // "github.com/goindow/toolbox"
 )
 
