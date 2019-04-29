@@ -711,7 +711,6 @@ func (this *validator) regexValidator(attr string, rule Rule, obj M) E {
 // emailValidator 邮箱
 // Rule.Required    bool    可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 func (this *validator) emailValidator(attr string, rule Rule, obj M) E {
-	rule.Rule = "email" // 为防止使用验证器的别名导致内置错误找不到，这里重新赋值
 	rule.Pattern = PATTERN_EMAIL
 	return this.regexValidator(attr, rule, obj)
 }
@@ -719,7 +718,6 @@ func (this *validator) emailValidator(attr string, rule Rule, obj M) E {
 // mobileValidator 中国大陆座机号
 // Rule.Required    bool    可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 func (this *validator) telValidator(attr string, rule Rule, obj M) E {
-	rule.Rule = "tel"
 	rule.Pattern = PATTERN_TEL
 	return this.regexValidator(attr, rule, obj)
 }
@@ -727,7 +725,6 @@ func (this *validator) telValidator(attr string, rule Rule, obj M) E {
 // mobileValidator 中国大陆手机号
 // Rule.Required    bool    可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 func (this *validator) mobileValidator(attr string, rule Rule, obj M) E {
-	rule.Rule = "mobile"
 	rule.Pattern = PATTERN_MOBILE
 	return this.regexValidator(attr, rule, obj)
 }
@@ -735,7 +732,6 @@ func (this *validator) mobileValidator(attr string, rule Rule, obj M) E {
 // mobileValidator 中国大陆邮编
 // Rule.Required    bool    可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 func (this *validator) zipcodeValidator(attr string, rule Rule, obj M) E {
-	rule.Rule = "zipcode"
 	rule.Pattern = PATTERN_ZIPCODE
 	return this.regexValidator(attr, rule, obj)
 }
