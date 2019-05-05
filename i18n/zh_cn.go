@@ -70,6 +70,5 @@ func init() {
         "mobile": "无效的手机号",
         // zipcodeValidator
         "zipcode": "无效的邮编",
-
     }
 }
