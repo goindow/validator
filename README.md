@@ -360,69 +360,9 @@ rule := {Attr: "zipcode", Rule: "zipcode"}
 ```
 
 ## 自动验证
-- 本例以 beego 框架为例（beego 的 validator 包不支持场景），扩展其 model，实现自动验证
+- 本例以 beego 框架为例，扩展其 model，实现自动验证，使用常见的 base model 和 base controller 模式，为子类提供统一方法
 
-```go
-package base
-
-import (
-    "reflect"
-    "github.com/goindow/validator"
-)
-
-type E = validator.E
-type M = validator.M
-type Rule = validator.Rule
-type Rules = validator.Rules
-type Scence = validator.Scence
-type BaseModel struct {}
-
-// 定义验证规则
-func (this *BaseModel) Rules() Rules{
-    return nil
-}
-
-// 自动验证
-func (this *BaseModel) Validate(ptrChildModel interface{}, js map[string]interface{}, scence Scence) []E {
-    // 获取 ptrChildModel 的 Rules
-    if rules := reflect.ValueOf(ptrChildModel).MethodByName("Rules").Call(make([]reflect.Value, 0))[0].Interface().(Rules); len(rules) != 0 {
-        return validator.New().Validate(rules, js, scence)      
-    }
-    return nil
-}
-```
-
-```go
-package models
-
-import (
-    "explore/base"
-)
-
-type User struct {
-    base.BaseModel
-    Id          int64
-    Username    string
-    Password    string
-}
-
-func (this *User) Rules() base.Rules {
-    return base.Rules{
-        "create": {
-            {Attr: []string{"username", "password", "rpassword"}, Rule: "required"},
-            {Attr: "username", Rule: "string"},
-            {Attr: "password", Rule: "regex", Pattern: `[a-zA-Z].\d{5,}`},
-            {Attr: "rpassword", Rule: "func", Func: func(attr string, rule base.Rule, obj base.M) base.E {
-                if obj["password"] != obj["rpassword"] {
-                    return base.E{attr: "两次输入不一致"}
-                }
-                return nil
-            }},
-        },
-    }
-}
-```
-
+### base/controller
 ```go
 package base
 
@@ -456,6 +396,79 @@ func (this *BaseController) ReturnJson(code int64, data interface{}, e interface
 }
 ```
 
+### base/model
+```go
+package base
+
+import (
+    "reflect"
+    "github.com/goindow/validator"
+)
+
+type E = validator.E
+type M = validator.M
+type Rule = validator.Rule
+type Rules = validator.Rules
+type Scence = validator.Scence
+type BaseModel struct {}
+
+// 定义验证规则
+func (this *BaseModel) Rules() Rules{
+    return nil
+}
+
+// 自动验证
+func (this *BaseModel) Validate(ptrChildModel interface{}, js map[string]interface{}, scence Scence) []E {
+    // 获取 ptrChildModel 的 Rules
+    if rules := reflect.ValueOf(ptrChildModel).MethodByName("Rules").Call(make([]reflect.Value, 0))[0].Interface().(Rules); len(rules) != 0 {
+        return validator.New().Validate(rules, js, scence)      
+    }
+    return nil
+}
+```
+
+### models/user
+```go
+package models
+
+import (
+    "explore/base"
+)
+
+type User struct {
+    base.BaseModel
+    Id          int64
+    Username    string
+    Password    string
+}
+
+func (this *User) Rules() base.Rules {
+    return base.Rules{
+        "signup": {
+            {Attr: []string{"username", "password", "rpassword"}, Rule: "required"},
+            {Attr: "username", Rule: "string"},
+            {Attr: "password", Rule: "regex", Pattern: `[a-zA-Z].\d{5,}`},
+            {Attr: "rpassword", Rule: "func", Func: func(attr string, rule base.Rule, obj base.M) base.E {
+                if obj["password"] != obj["rpassword"] {
+                    return base.E{attr: "两次输入不一致"}
+                }
+                return nil
+            }},
+        },
+        "signin": {
+            {Attr: []string{"username", "password"}, Rule: "required"},
+            {Attr: "password", Rule: "func", Func: func(attr string, rule base.Rule, obj base.M) base.E {
+                if obj["username"] != "admin" || obj["password"] != "admin" {
+                    return base.E{attr: "用户名或密码错误"}
+                }
+                return nil
+            }},
+        },
+    }
+}
+```
+
+### controllers/user
 ```go
 package controllers
 
