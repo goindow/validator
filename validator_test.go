@@ -58,7 +58,7 @@ func Test_Lang(t *testing.T) {
 	}
 	message := generator(vEnglish.default_errors["required"], "hobby")
 	e := vEnglish.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e) // [map[hobby:missing field hobby]]
+	// toolbox.Dump(e) // [map[hobby:can not be empty]]
 	if len(e) == 0 || e[0]["hobby"] != message {
 		fail(t, "should print errors("+message+")")
 	}
@@ -174,7 +174,7 @@ func Test_Generator_ErrorInfo(t *testing.T) {
 	}
 	message := generator(v.default_errors["required"], "username")
 	e := v.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e) // [map[username:username 不能为空]]
+	// toolbox.Dump(e) // [map[username:不能为空]]
 	if len(e) == 0 || e[0]["username"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -326,7 +326,7 @@ func Test_Rule_FuncValidator_Required_True_Empty(t *testing.T) {
 	}
 	message := generator(v.default_errors["required"], "field")
 	e := v.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e) // [map[field:field 不能为空]]
+	// toolbox.Dump(e) // [map[field:不能为空]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -360,7 +360,7 @@ func Test_Rule_RequiredValidator(t *testing.T) {
 	}
 	message := generator(v.default_errors["required"], "username")
 	e := v.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e) // [map[username:username 不能为空]]
+	// toolbox.Dump(e) // [map[username:不能为空]]
 	if len(e) == 0 || e[0]["username"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -393,7 +393,7 @@ func Test_Rule_InValidator_String(t *testing.T) {
 	obj := map[string]interface{}{"gender": "unknown"}
 	message := generator(v.default_errors["in"], "gender", "["+strings.Join(rules["create"][0].Enum, "、")+"]")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[gender:gender 只能是 [male、female] 中的一个]]
+	// toolbox.Dump(e) // [map[gender:只能是 [male、female] 中的一个]]
 	if len(e) == 0 || e[0]["gender"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -437,7 +437,7 @@ func Test_Rule_InValidator_Required_True_Empty(t *testing.T) {
 	}
 	message := generator(v.default_errors["required"], "gender")
 	e := v.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e) // [map[gender:gender 不能为空]]
+	// toolbox.Dump(e) // [map[gender:不能为空]]
 	if len(e) == 0 || e[0]["gender"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -470,7 +470,7 @@ func Test_Rule_InValidator_TypeErr(t *testing.T) {
 	obj := map[string]interface{}{"gender": nil}
 	message := generator(v.default_errors["inValid"], "gender")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[gender:gender 必须是字符串、数字、布尔中的一种]]
+	// toolbox.Dump(e) // [map[gender:必须是字符串、数字、布尔中的一种]]
 	if len(e) == 0 || e[0]["gender"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -610,7 +610,7 @@ func Test_Rule_StringValidator(t *testing.T) {
 	obj := map[string]interface{}{"username": 123}
 	message := generator(v.default_errors["string"], "username")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[username:username 必须是字符串]]
+	// toolbox.Dump(e) // [map[username:必须是字符串]]
 	if len(e) == 0 || e[0]["username"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -654,7 +654,7 @@ func Test_Rule_StringValidator_Required_True_Empty(t *testing.T) {
 	}
 	message := generator(v.default_errors["required"], "username")
 	e := v.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e) // [map[username:username 不能为空]]
+	// toolbox.Dump(e) // [map[username:不能为空]]
 	if len(e) == 0 || e[0]["username"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -724,7 +724,7 @@ func Test_Rule_StringValidator_Max_Min_Range(t *testing.T) {
 	obj := map[string]interface{}{"username": "hyb"}
 	message := generator(v.default_errors["stringLengthRange"], "username", 6, 10)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[username:username 长度必须在 6 到 10 之间]]
+	// toolbox.Dump(e) // [map[username:长度必须在 6 到 10 之间]]
 	if len(e) == 0 || e[0]["username"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -754,7 +754,7 @@ func Test_Rule_StringValidator_Max_Min_Eq(t *testing.T) {
 	obj := map[string]interface{}{"username": "hyb"}
 	message := generator(v.default_errors["stringLengthEqual"], "username", 10)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[username:username 长度必须是 10]]
+	// toolbox.Dump(e) // [map[username:长度必须是 10]]
 	if len(e) == 0 || e[0]["username"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -784,7 +784,7 @@ func Test_Rule_StringValidator_Max(t *testing.T) {
 	obj := map[string]interface{}{"username": "12345678901"}
 	message := generator(v.default_errors["stringLengthMax"], "username", 10)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[username:username 长度不能超过 10]]
+	// toolbox.Dump(e) // [map[username:长度不能超过 10]]
 	if len(e) == 0 || e[0]["username"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -814,7 +814,7 @@ func Test_Rule_StringValidator_Min(t *testing.T) {
 	obj := map[string]interface{}{"username": "hyb"}
 	message := generator(v.default_errors["stringLengthMin"], "username", 10)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[username:username 长度不能小于 10]]
+	// toolbox.Dump(e) // [map[username:长度不能小于 10]]
 	if len(e) == 0 || e[0]["username"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -846,7 +846,7 @@ func Test_Rule_IntegerValidator_String(t *testing.T) {
 	obj := map[string]interface{}{"field": "3.14"}
 	message := generator(v.default_errors["integer"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是整数]]
+	// toolbox.Dump(e) // [map[field:必须是整数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -890,7 +890,7 @@ func Test_Rule_IntegerValidator_Required_True_Empty(t *testing.T) {
 	}
 	message := generator(v.default_errors["required"], "field")
 	e := v.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e) // [map[field:field 不能为空]]
+	// toolbox.Dump(e) // [map[field:不能为空]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -996,7 +996,7 @@ func Test_Rule_IntegerValidator_Max(t *testing.T) {
 	obj := map[string]interface{}{"field": 151}
 	message := generator(v.default_errors["integerMax"], "field", 150)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不大于 150 的整数]]
+	// toolbox.Dump(e) // [map[field:必须是不大于 150 的整数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1026,7 +1026,7 @@ func Test_Rule_IntegerValidator_Min(t *testing.T) {
 	obj := map[string]interface{}{"field": 17}
 	message := generator(v.default_errors["integerMin"], "field", 18)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不小于 18 的整数]]
+	// toolbox.Dump(e) // [map[field:必须是不小于 18 的整数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1056,7 +1056,7 @@ func Test_Rule_IntegerValidator_Max_Min_Range(t *testing.T) {
 	obj := map[string]interface{}{"field": 51}
 	message := generator(v.default_errors["integerRange"], "field", 18, 35)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是介于 18 到 35 的整数]]
+	// toolbox.Dump(e) // [map[field:必须是介于 18 到 35 的整数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1086,7 +1086,7 @@ func Test_Rule_IntegerValidator_Max_Min_Eq(t *testing.T) {
 	obj := map[string]interface{}{"field": 21}
 	message := generator(v.default_errors["equal"], "field", 20)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是 20]]
+	// toolbox.Dump(e) // [map[field:必须是 20]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1116,7 +1116,7 @@ func Test_Rule_IntegerValidator_Symbol_Positive(t *testing.T) {
 	obj := map[string]interface{}{"field": 0}
 	message := generator(v.default_errors["integerPositive"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是正整数]]
+	// toolbox.Dump(e) // [map[field:必须是正整数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1146,7 +1146,7 @@ func Test_Rule_IntegerValidator_Symbol_Negative(t *testing.T) {
 	obj := map[string]interface{}{"field": 18}
 	message := generator(v.default_errors["integerNegative"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是负整数]]
+	// toolbox.Dump(e) // [map[field:必须是负整数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1176,7 +1176,7 @@ func Test_Rule_IntegerValidator_Symbol_Positive_Max(t *testing.T) {
 	obj := map[string]interface{}{"field": 36}
 	message := generator(v.default_errors["integerPositiveMax"], "field", 35)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不大于 35 的正整数]]
+	// toolbox.Dump(e) // [map[field:必须是不大于 35 的正整数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1206,7 +1206,7 @@ func Test_Rule_IntegerValidator_Symbol_Positive_Min(t *testing.T) {
 	obj := map[string]interface{}{"field": 17}
 	message := generator(v.default_errors["integerPositiveMin"], "field", 18)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不小于 18 的正整数]]
+	// toolbox.Dump(e) // [map[field:必须是不小于 18 的正整数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1236,7 +1236,7 @@ func Test_Rule_IntegerValidator_Symbol_Positive_Max_Min_Range(t *testing.T) {
 	obj := map[string]interface{}{"field": 17}
 	message := generator(v.default_errors["integerPositiveRange"], "field", 18, 35)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是介于 18 到 35 的正整数]]
+	// toolbox.Dump(e) // [map[field:必须是介于 18 到 35 的正整数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1266,7 +1266,7 @@ func Test_Rule_IntegerValidator_Symbol_Positive_Max_Min_Eq(t *testing.T) {
 	obj := map[string]interface{}{"field": 17}
 	message := generator(v.default_errors["equal"], "field", 18)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是 18]]
+	// toolbox.Dump(e) // [map[field:必须是 18]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1296,7 +1296,7 @@ func Test_Rule_IntegerValidator_Symbol_Negative_Max(t *testing.T) {
 	obj := map[string]interface{}{"field": -99}
 	message := generator(v.default_errors["integerNegativeMax"], "field", -100)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不大于 -100 的负整数]]
+	// toolbox.Dump(e) // [map[field:必须是不大于 -100 的负整数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1326,7 +1326,7 @@ func Test_Rule_IntegerValidator_Symbol_Negative_Min(t *testing.T) {
 	obj := map[string]interface{}{"field": -101}
 	message := generator(v.default_errors["integerNegativeMin"], "field", -100)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不小于 -100 的负整数]]
+	// toolbox.Dump(e) // [map[field:必须是不小于 -100 的负整数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1356,7 +1356,7 @@ func Test_Rule_IntegerValidator_Symbol_Negative_Max_Min_Range(t *testing.T) {
 	obj := map[string]interface{}{"field": -101}
 	message := generator(v.default_errors["integerNegativeRange"], "field", -100, -1)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是介于 -100 到 -1 的负整数]]
+	// toolbox.Dump(e) // [map[field:必须是介于 -100 到 -1 的负整数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1386,7 +1386,7 @@ func Test_Rule_IntegerValidator_Symbol_Negative_Max_Min_Eq(t *testing.T) {
 	obj := map[string]interface{}{"field": -101}
 	message := generator(v.default_errors["equal"], "field", -100)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是 -100]]
+	// toolbox.Dump(e) // [map[field:必须是 -100]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1419,7 +1419,7 @@ func Test_Rule_IntegerValidator_Float64(t *testing.T) {
 	obj := map[string]interface{}{"field": float64(3.14)}
 	message := generator(v.default_errors["integer"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是整数]]
+	// toolbox.Dump(e) // [map[field:必须是整数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1450,7 +1450,7 @@ func Test_Rule_IntegerValidator_Float32(t *testing.T) {
 	obj := map[string]interface{}{"field": float32(3.14)}
 	message := generator(v.default_errors["integer"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是整数]]
+	// toolbox.Dump(e) // [map[field:必须是整数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1558,7 +1558,7 @@ func Test_Rule_DecimalValidator_String(t *testing.T) {
 	obj := map[string]interface{}{"field": "3"}
 	message := generator(v.default_errors["decimal"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是小数]]
+	// toolbox.Dump(e) // [map[field:必须是小数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1602,7 +1602,7 @@ func Test_Rule_DecimalValidator_Required_True_Empty(t *testing.T) {
 	}
 	message := generator(v.default_errors["required"], "field")
 	e := v.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e) // [map[field:field 不能为空]]
+	// toolbox.Dump(e) // [map[field:不能为空]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1708,7 +1708,7 @@ func Test_Rule_DecimalValidator_Max(t *testing.T) {
 	obj := map[string]interface{}{"field": 22.2}
 	message := generator(v.default_errors["decimalMax"], "field", 10)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不大于 10 的小数]]
+	// toolbox.Dump(e) // [map[field:必须是不大于 10 的小数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1752,7 +1752,7 @@ func Test_Rule_DecimalValidator_Min(t *testing.T) {
 	obj := map[string]interface{}{"field": 3.14}
 	message := generator(v.default_errors["decimalMin"], "field", 10)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不小于 10 的小数]]
+	// toolbox.Dump(e) // [map[field:必须是不小于 10 的小数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1796,7 +1796,7 @@ func Test_Rule_DecimalValidator_Max_Min_Range(t *testing.T) {
 	obj := map[string]interface{}{"field": 11.11}
 	message := generator(v.default_errors["decimalRange"], "field", 10, 11)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是介于 10 到 11 的小数]]
+	// toolbox.Dump(e) // [map[field:必须是介于 10 到 11 的小数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1826,7 +1826,7 @@ func Test_Rule_DecimalValidator_Max_Min_Eq(t *testing.T) {
 	obj := map[string]interface{}{"field": 11.11}
 	message := generator(v.default_errors["equal"], "field", 10.88)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是 10.88]]
+	// toolbox.Dump(e) // [map[field:必须是 10.88]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1856,7 +1856,7 @@ func Test_Rule_DecimalValidator_Symbol_Positive(t *testing.T) {
 	obj := map[string]interface{}{"field": -3.14}
 	message := generator(v.default_errors["decimalPositive"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是正小数]]
+	// toolbox.Dump(e) // [map[field:必须是正小数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1886,7 +1886,7 @@ func Test_Rule_DecimalValidator_Symbol_Negative(t *testing.T) {
 	obj := map[string]interface{}{"field": 3.14}
 	message := generator(v.default_errors["decimalNegative"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是负小数]]
+	// toolbox.Dump(e) // [map[field:必须是负小数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1916,7 +1916,7 @@ func Test_Rule_DecimalValidator_Symbol_Positive_Max(t *testing.T) {
 	obj := map[string]interface{}{"field": 3.77}
 	message := generator(v.default_errors["decimalPositiveMax"], "field", 3.5)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不大于 3.5 的正小数]]
+	// toolbox.Dump(e) // [map[field:必须是不大于 3.5 的正小数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1946,7 +1946,7 @@ func Test_Rule_DecimalValidator_Symbol_Positive_Min(t *testing.T) {
 	obj := map[string]interface{}{"field": 3.14}
 	message := generator(v.default_errors["decimalPositiveMin"], "field", 3.5)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不小于 3.5 的正小数]]
+	// toolbox.Dump(e) // [map[field:必须是不小于 3.5 的正小数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -1976,7 +1976,7 @@ func Test_Rule_DecimalValidator_Symbol_Positive_Max_Min_Range(t *testing.T) {
 	obj := map[string]interface{}{"field": 3.33}
 	message := generator(v.default_errors["decimalPositiveRange"], "field", 3.5, 4)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是介于 3.5 到 4 的正小数]]
+	// toolbox.Dump(e) // [map[field:必须是介于 3.5 到 4 的正小数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2006,7 +2006,7 @@ func Test_Rule_DecimalValidator_Symbol_Positive_Max_Min_Eq(t *testing.T) {
 	obj := map[string]interface{}{"field": 3.4}
 	message := generator(v.default_errors["equal"], "field", 3.5)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是 3.5]]
+	// toolbox.Dump(e) // [map[field:必须是 3.5]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2036,7 +2036,7 @@ func Test_Rule_DecimalValidator_Symbol_Negative_Max(t *testing.T) {
 	obj := map[string]interface{}{"field": -1.1}
 	message := generator(v.default_errors["decimalNegativeMax"], "field", -3.14)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不大于 -3.14 的负小数]]
+	// toolbox.Dump(e) // [map[field:必须是不大于 -3.14 的负小数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2066,7 +2066,7 @@ func Test_Rule_DecimalValidator_Symbol_Negative_Min(t *testing.T) {
 	obj := map[string]interface{}{"field": -3.5}
 	message := generator(v.default_errors["decimalNegativeMin"], "field", -3.14)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不小于 -3.14 的负小数]]
+	// toolbox.Dump(e) // [map[field:必须是不小于 -3.14 的负小数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2096,7 +2096,7 @@ func Test_Rule_DecimalValidator_Symbol_Negative_Max_Min_Range(t *testing.T) {
 	obj := map[string]interface{}{"field": -3.5}
 	message := generator(v.default_errors["decimalNegativeRange"], "field", -3.14, -1)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是介于 -3.14 到 -1 的负小数]]
+	// toolbox.Dump(e) // [map[field:必须是介于 -3.14 到 -1 的负小数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2126,7 +2126,7 @@ func Test_Rule_DecimalValidator_Symbol_Negative_Max_Min_Eq(t *testing.T) {
 	obj := map[string]interface{}{"field": -3.5}
 	message := generator(v.default_errors["equal"], "field", -3.14)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是 -3.14]]
+	// toolbox.Dump(e) // [map[field:必须是 -3.14]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2160,7 +2160,7 @@ func Test_Rule_DecimalValidator_Float64(t *testing.T) {
 	obj := map[string]interface{}{"field": float64(33)}
 	message := generator(v.default_errors["decimal"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是小数]]
+	// toolbox.Dump(e) // [map[field:必须是小数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2191,7 +2191,7 @@ func Test_Rule_DecimalValidator_Float32(t *testing.T) {
 	obj := map[string]interface{}{"field": float32(33)}
 	message := generator(v.default_errors["decimal"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是小数]]
+	// toolbox.Dump(e) // [map[field:必须是小数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2224,7 +2224,7 @@ func Test_Rule_NumberValidator_String(t *testing.T) {
 	obj := map[string]interface{}{"field": "hyb"}
 	message := generator(v.default_errors["number"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是数字]]
+	// toolbox.Dump(e) // [map[field:必须是数字]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2268,7 +2268,7 @@ func Test_Rule_NumberValidator_Required_True_Empty(t *testing.T) {
 	}
 	message := generator(v.default_errors["required"], "field")
 	e := v.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e) // [map[field:field 不能为空]]
+	// toolbox.Dump(e) // [map[field:不能为空]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2374,7 +2374,7 @@ func Test_Rule_NumberValidator_Max(t *testing.T) {
 	obj := map[string]interface{}{"field": 22.2}
 	message := generator(v.default_errors["numberMax"], "field", 10)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不大于 10 的数]]
+	// toolbox.Dump(e) // [map[field:必须是不大于 10 的数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2418,7 +2418,7 @@ func Test_Rule_NumberValidator_Min(t *testing.T) {
 	obj := map[string]interface{}{"field": 3.14}
 	message := generator(v.default_errors["numberMin"], "field", 10)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不小于 10 的数]]
+	// toolbox.Dump(e) // [map[field:必须是不小于 10 的数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2462,7 +2462,7 @@ func Test_Rule_NumberValidator_Max_Min_Range(t *testing.T) {
 	obj := map[string]interface{}{"field": 11.11}
 	message := generator(v.default_errors["numberRange"], "field", 10, 11)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是介于 10 到 11 的数]]
+	// toolbox.Dump(e) // [map[field:必须是介于 10 到 11 的数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2492,7 +2492,7 @@ func Test_Rule_NumberValidator_Max_Min_Eq(t *testing.T) {
 	obj := map[string]interface{}{"field": 11.11}
 	message := generator(v.default_errors["equal"], "field", 10.88)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是 10.88]]
+	// toolbox.Dump(e) // [map[field:必须是 10.88]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2522,7 +2522,7 @@ func Test_Rule_NumberValidator_Symbol_Positive(t *testing.T) {
 	obj := map[string]interface{}{"field": -3.14}
 	message := generator(v.default_errors["numberPositive"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是正数]]
+	// toolbox.Dump(e) // [map[field:必须是正数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2552,7 +2552,7 @@ func Test_Rule_NumberValidator_Symbol_Negative(t *testing.T) {
 	obj := map[string]interface{}{"field": 3.14}
 	message := generator(v.default_errors["numberNegative"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是负数]]
+	// toolbox.Dump(e) // [map[field:必须是负数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2582,7 +2582,7 @@ func Test_Rule_NumberValidator_Symbol_Positive_Max(t *testing.T) {
 	obj := map[string]interface{}{"field": 3.77}
 	message := generator(v.default_errors["numberPositiveMax"], "field", 3.5)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不大于 3.5 的正数]]
+	// toolbox.Dump(e) // [map[field:必须是不大于 3.5 的正数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2612,7 +2612,7 @@ func Test_Rule_NumberValidator_Symbol_Positive_Min(t *testing.T) {
 	obj := map[string]interface{}{"field": 3.14}
 	message := generator(v.default_errors["numberPositiveMin"], "field", 3.5)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不小于 3.5 的正数]]
+	// toolbox.Dump(e) // [map[field:必须是不小于 3.5 的正数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2642,7 +2642,7 @@ func Test_Rule_NumberValidator_Symbol_Positive_Max_Min_Range(t *testing.T) {
 	obj := map[string]interface{}{"field": 3.33}
 	message := generator(v.default_errors["numberPositiveRange"], "field", 3.5, 4)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是介于 3.5 到 4 的正数]]
+	// toolbox.Dump(e) // [map[field:必须是介于 3.5 到 4 的正数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2672,7 +2672,7 @@ func Test_Rule_NumberValidator_Symbol_Positive_Max_Min_Eq(t *testing.T) {
 	obj := map[string]interface{}{"field": 3.4}
 	message := generator(v.default_errors["equal"], "field", 3.5)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是 3.5]]
+	// toolbox.Dump(e) // [map[field:必须是 3.5]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2702,7 +2702,7 @@ func Test_Rule_NumberValidator_Symbol_Negative_Max(t *testing.T) {
 	obj := map[string]interface{}{"field": -1.1}
 	message := generator(v.default_errors["numberNegativeMax"], "field", -3.14)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不大于 -3.14 的负数]]
+	// toolbox.Dump(e) // [map[field:必须是不大于 -3.14 的负数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2732,7 +2732,7 @@ func Test_Rule_NumberValidator_Symbol_Negative_Min(t *testing.T) {
 	obj := map[string]interface{}{"field": -3.5}
 	message := generator(v.default_errors["numberNegativeMin"], "field", -3.14)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是不小于 -3.14 的负数]]
+	// toolbox.Dump(e) // [map[field:必须是不小于 -3.14 的负数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2762,7 +2762,7 @@ func Test_Rule_NumberValidator_Symbol_Negative_Max_Min_Range(t *testing.T) {
 	obj := map[string]interface{}{"field": -3.5}
 	message := generator(v.default_errors["numberNegativeRange"], "field", -3.14, -1)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是介于 -3.14 到 -1 的负数]]
+	// toolbox.Dump(e) // [map[field:必须是介于 -3.14 到 -1 的负数]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2792,7 +2792,7 @@ func Test_Rule_NumberValidator_Symbol_Negative_Max_Min_Eq(t *testing.T) {
 	obj := map[string]interface{}{"field": -3.5}
 	message := generator(v.default_errors["equal"], "field", -3.14)
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是 -3.14]]
+	// toolbox.Dump(e) // [map[field:必须是 -3.14]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2932,7 +2932,7 @@ func Test_Rule_BooleanValidator(t *testing.T) {
 	obj := map[string]interface{}{"field": 1}
 	message := generator(v.default_errors["boolean"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是布尔值或布尔字符串]]
+	// toolbox.Dump(e) // [map[field:必须是布尔值或布尔字符串]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2976,7 +2976,7 @@ func Test_Rule_BooleanValidator_Required_True_Empty(t *testing.T) {
 	}
 	message := generator(v.default_errors["required"], "field")
 	e := v.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e) // [map[field:field 不能为空]]
+	// toolbox.Dump(e) // [map[field:不能为空]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -2994,7 +2994,7 @@ func Test_Rule_BooleanValidator_String(t *testing.T) {
 	obj := map[string]interface{}{"field": "abc"}
 	message := generator(v.default_errors["boolean"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是布尔值或布尔字符串]]
+	// toolbox.Dump(e) // [map[field:必须是布尔值或布尔字符串]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -3072,7 +3072,7 @@ func Test_Rule_IpValidator_TypeErr(t *testing.T) {
 	obj := map[string]interface{}{"field": 15990573367}
 	message := generator(v.default_errors["string"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是字符串]]
+	// toolbox.Dump(e) // [map[field:必须是字符串]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -3101,7 +3101,7 @@ func Test_Rule_IpValidator_Required_True_Empty(t *testing.T) {
 	}
 	message := generator(v.default_errors["required"], "field")
 	e := v.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e) // [map[field:field 不能为空]]
+	// toolbox.Dump(e) // [map[field:不能为空]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -3119,7 +3119,7 @@ func Test_Rule_RegexValidator(t *testing.T) {
 	obj := map[string]interface{}{"field": "https://"}
 	message := generator(v.default_errors["regex"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 格式不对]]
+	// toolbox.Dump(e) // [map[field:格式不对]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -3150,7 +3150,7 @@ func Test_Rule_RegexValidator_TypeErr(t *testing.T) {
 	obj := map[string]interface{}{"field": 15990573367}
 	message := generator(v.default_errors["string"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是字符串]]
+	// toolbox.Dump(e) // [map[field:必须是字符串]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -3179,7 +3179,7 @@ func Test_Rule_RegexValidator_Required_True_Empty(t *testing.T) {
 	}
 	message := generator(v.default_errors["required"], "field")
 	e := v.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e) // [map[field:field 不能为空]]
+	// toolbox.Dump(e) // [map[field:不能为空]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -3245,7 +3245,7 @@ func Test_Rule_EmailValidator_TypeErr(t *testing.T) {
 	obj := map[string]interface{}{"field": 15990573367}
 	message := generator(v.default_errors["string"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是字符串]]
+	// toolbox.Dump(e) // [map[field:必须是字符串]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -3274,7 +3274,7 @@ func Test_Rule_EmailValidator_Required_True_Empty(t *testing.T) {
 	}
 	message := generator(v.default_errors["required"], "field")
 	e := v.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e) // [map[field:field 不能为空]]
+	// toolbox.Dump(e) // [map[field:不能为空]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -3323,7 +3323,7 @@ func Test_Rule_TelValidator_TypeErr(t *testing.T) {
 	obj := map[string]interface{}{"field": 15990573367}
 	message := generator(v.default_errors["string"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是字符串]]
+	// toolbox.Dump(e) // [map[field:必须是字符串]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -3352,7 +3352,7 @@ func Test_Rule_TelValidator_Required_True_Empty(t *testing.T) {
 	}
 	message := generator(v.default_errors["required"], "field")
 	e := v.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e) // [map[field:field 不能为空]]
+	// toolbox.Dump(e) // [map[field:不能为空]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -3370,7 +3370,7 @@ func Test_Rule_MobileValidator(t *testing.T) {
 	obj := map[string]interface{}{"field": "159905733"}
 	message := generator(v.default_errors["mobile"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 手机号格式不对]]
+	// toolbox.Dump(e) // [map[field:手机号格式不对]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -3401,7 +3401,7 @@ func Test_Rule_MobileValidator_TypeErr(t *testing.T) {
 	obj := map[string]interface{}{"field": 15990573367}
 	message := generator(v.default_errors["string"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是字符串]]
+	// toolbox.Dump(e) // [map[field:必须是字符串]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -3430,7 +3430,7 @@ func Test_Rule_MobileValidator_Required_True_Empty(t *testing.T) {
 	}
 	message := generator(v.default_errors["required"], "field")
 	e := v.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e) // [map[field:field 不能为空]]
+	// toolbox.Dump(e) // [map[field:不能为空]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -3479,7 +3479,7 @@ func Test_Rule_ZipcodeValidator_TypeErr(t *testing.T) {
 	obj := map[string]interface{}{"field": 15990573367}
 	message := generator(v.default_errors["string"], "field")
 	e := v.Validate(rules, obj, "create")
-	// toolbox.Dump(e) // [map[field:field 必须是字符串]]
+	// toolbox.Dump(e) // [map[field:必须是字符串]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
@@ -3508,7 +3508,7 @@ func Test_Rule_ZipcodeValidator_Required_True_Empty(t *testing.T) {
 	}
 	message := generator(v.default_errors["required"], "field")
 	e := v.Validate(rules, objEmpty, "create")
-	// toolbox.Dump(e) // [map[field:field 不能为空]]
+	// toolbox.Dump(e) // [map[field:不能为空]]
 	if len(e) == 0 || e[0]["field"] != message {
 		fail(t, "should print error("+message+")")
 	}
