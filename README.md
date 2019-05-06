@@ -360,3 +360,125 @@ rule := {Attr: "zipcode", Rule: "zipcode"}
 ```
 
 ## 自动验证
+- 本例以 beego 框架为例（beego 的 validator 包不支持场景），扩展其 model，实现自动验证
+
+```go
+package base
+
+import (
+    "reflect"
+    "github.com/goindow/validator"
+)
+
+type E = validator.E
+type M = validator.M
+type Rule = validator.Rule
+type Rules = validator.Rules
+type Scence = validator.Scence
+type BaseModel struct {}
+
+// 定义验证规则
+func (this *BaseModel) Rules() Rules{
+    return nil
+}
+
+// 自动验证
+func (this *BaseModel) Validate(ptrChildModel interface{}, js map[string]interface{}, scence Scence) []E {
+    // 获取 ptrChildModel 的 Rules
+    if rules := reflect.ValueOf(ptrChildModel).MethodByName("Rules").Call(make([]reflect.Value, 0))[0].Interface().(Rules); len(rules) != 0 {
+        return validator.New().Validate(rules, js, scence)      
+    }
+    return nil
+}
+```
+
+```go
+package models
+
+import (
+    "explore/base"
+)
+
+type User struct {
+    base.BaseModel
+    Id          int64
+    Username    string
+    Password    string
+}
+
+func (this *User) Rules() base.Rules {
+    return base.Rules{
+        "create": {
+            {Attr: []string{"username", "password", "rpassword"}, Rule: "required"},
+            {Attr: "username", Rule: "string"},
+            {Attr: "password", Rule: "regex", Pattern: `[a-zA-Z].\d{5,}`},
+            {Attr: "rpassword", Rule: "func", Func: func(attr string, rule base.Rule, obj base.M) base.E {
+                if obj["password"] != obj["rpassword"] {
+                    return base.E{attr: "两次输入不一致"}
+                }
+                return nil
+            }},
+        },
+    }
+}
+```
+
+```go
+package base
+
+import (
+    "encoding/json"
+    "github.com/astaxie/beego"
+)
+
+type JSON struct {
+    Code      int64          `json:"code"`      
+    Data      interface{}    `json:"data"`
+    Errors    interface{}    `json:"errors"`
+}
+
+type BaseController struct {
+    beego.Controller
+}
+
+func (this *BaseController) LoadJson() (beego.M, error){
+    var js beego.M
+    return js, json.Unmarshal(this.Ctx.Input.RequestBody, &js)
+}
+
+func (this *BaseController) ReturnJson(code int64, data interface{}, e interface{}) {
+    this.Data["json"] = &JSON{
+        Code: code,
+        Data: data,
+        Errors: e,
+    }
+    this.ServeJSON()
+}
+```
+
+```go
+package controllers
+
+import (
+    "explore/base"
+    "explore/models"
+)
+
+type UserController struct {
+    base.BaseController
+}
+
+// @router / [post]
+func (this *UserController) Create() {
+    if js, err := this.LoadJson(); err != nil {
+        // json 解析失败
+    } else {
+        var user models.User
+        if e := user.Validate(&user, js, "create"); len(e) != 0 {
+            this.ReturnJson(3000, nil, e)
+        } else {
+            this.ReturnJson(2000, user, nil)
+        }
+    }
+}
+```
