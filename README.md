@@ -405,11 +405,13 @@ import (
     "github.com/goindow/validator"
 )
 
+// 为了避免每个子 model 文件都去 import validator，在这里定义几个变量别名，供子 model 直接使用
 type E = validator.E
 type M = validator.M
 type Rule = validator.Rule
 type Rules = validator.Rules
 type Scence = validator.Scence
+
 type BaseModel struct {}
 
 // 定义验证规则
