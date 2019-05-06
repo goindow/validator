@@ -166,6 +166,7 @@ func main() {
 ```
 
 ## 内置验证器
+- [funcValidator](#funcValidator)
 - [requiredValidator](#requiredValidator)
 - [inValidator](#inValidator)
 - [stringValidator](#stringValidator)
@@ -179,6 +180,20 @@ func main() {
 - [telValidator](#telValidator)
 - [mobileValidator](#mobileValidator)
 - [zipcodeValidator](#zipcodeValidator)
+
+### funcValidator
+- 自定义验证函数
+- Rule.Rule        string         必选    func
+- Rule.Required    bool           可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
+- Rule.Func        validator.F    可选    使用 Rule.Func 来验证本条 Rule
+```go
+rule := {Attr: "password", Rule: "func", Func: func(attr string, rule validator.Rule, obj validator.M) validator.E {
+    if obj["password"] != obj["rpassword"] {
+        return validator.E{attr: errors.New("两次输入不一致")}
+    }
+    return nil
+}}
+```
 
 ### requiredValidator
 - 必填
