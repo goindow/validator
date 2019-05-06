@@ -360,9 +360,9 @@ rule := {Attr: "zipcode", Rule: "zipcode"}
 ```
 
 ## 自动验证
-- 本例以 beego 框架为例，扩展其 model，实现自动验证，使用常见的 base model 和 base controller 模式，为子类提供统一方法
+- 本例以 beego 框架为例，扩展其 model，实现自动验证，使用常见的 base model/controller 模式，为子类提供统一方法
 
-### base/controller
+### base/BaseController
 ```go
 package base
 
@@ -396,7 +396,7 @@ func (this *BaseController) ReturnJson(code int64, data interface{}, e interface
 }
 ```
 
-### base/model
+### base/BaseModel
 ```go
 package base
 
@@ -429,7 +429,7 @@ func (this *BaseModel) Validate(ptrChildModel interface{}, js map[string]interfa
 }
 ```
 
-### models/user
+### models/User
 ```go
 package models
 
@@ -470,7 +470,7 @@ func (this *User) Rules() base.Rules {
 }
 ```
 
-### controllers/user
+### controllers/UserController
 ```go
 package controllers
 
