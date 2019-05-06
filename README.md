@@ -194,6 +194,8 @@ rule := {Attr: "password", Rule: "func", Func: func(attr string, rule validator.
     }
     return nil
 }}
+
+// 当 Rule.Rule == "func" 时，使用 Rule.Func 定义的函数来验证本条规则，Rule.Func 的类型时 validator.F
 ```
 
 ### requiredValidator
