@@ -78,8 +78,9 @@ func main() {
     - ***Symbol***      int64          **可选**，符号限制，作用于 numberValidator、integerValidator、decimalValidator，0(默认) - 正/负数，>0 - 正数(不包含0)，<0 - 负数(不包含0)
     - ***Max***         interface{}    **可选**，最大限制，作用于 stringValidator、numberValidator、integerValidator、decimalValidator
     - ***Min***         interface{}    **可选**，最小限制，同 Max
-    - ***Enum***        []string       **必选**（inValidator）**，枚举限制，作用于 inValidator
-    - ***Pattern***     string         **必选**（regexValidator）**，正则匹配模式，作用于 regexValidator
+    - ***Enum***        []string       **必选（inValidator）**，枚举限制，作用于 inValidator
+    - ***Func***        validator.F    **必选（funcValidator）**，自定义验证函数，作用于 funcValidator
+    - ***Pattern***     string         **必选（regexValidator）**，正则匹配模式，作用于 regexValidator
 - ***validator.Scence*** string 场景
 - ***validator.ScenceRules*** []validator.Rule 验证规则集 - 单一场景
 - ***validator.Rules map[Scence]ScenceRules*** 验证规则集 - 所有场景
