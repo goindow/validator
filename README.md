@@ -483,16 +483,30 @@ type UserController struct {
     base.BaseController
 }
 
-// @router / [post]
-func (this *UserController) Create() {
+// @router /signup [post]
+func (this *UserController) Signup() {
     if js, err := this.LoadJson(); err != nil {
-        // json 解析失败
+        epicker.Print(err)  // 无法解析的 json，返回 "json 格式错误" 错误
     } else {
         var user models.User
-        if e := user.Validate(&user, js, "create"); len(e) != 0 {
+        if e := user.Validate(&user, js, "signup"); len(e) != 0 {
             this.ReturnJson(3000, nil, e)
         } else {
-            this.ReturnJson(2000, user, nil)
+            this.ReturnJson(2000, nil, "注册成功")
+        }
+    }
+}
+
+// @router /signin [post]
+func (this *UserController) Signin() {
+    if js, err := this.LoadJson(); err != nil {
+        epicker.Print(err)  // 无法解析的 json，返回 "json 格式错误" 错误
+    } else {
+        var user models.User
+        if e := user.Validate(&user, js, "signin"); len(e) != 0 {
+            this.ReturnJson(3001, nil, e)
+        } else {
+            this.ReturnJson(2000, nil, "登陆成功")
         }
     }
 }
