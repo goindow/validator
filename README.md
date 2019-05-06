@@ -4,7 +4,7 @@ Package validator 实现了一个支持场景/国际化/自定义错误/自定�
 ## 说明
 - 该验证器是 ***逻辑验证器***（float64(10)/int32(10)/"10" 均可被 intValidator 验证通过）而不是 ***强类型验证器***
 - 考虑到经过 encoding/json 解析后的数字类型均被解析为 float64，强类型验证器不太可用，故此设计
-- 如果需要强类型验证，可以使用 AddValidator 自行扩展
+- 如果需要强类型验证，可以使用 funcValidator 自定义验证函数，或使用 AddValidator 自定义验证器
 
 ## 特性
 - 支持场景
