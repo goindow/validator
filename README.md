@@ -19,7 +19,7 @@ go get github.com/goindow/validator
 ```
 
 ## 示例
-- [配合框架的 model 层实现自动验证](#autoValidator)
+- [配合框架的 model 层实现自动验证](#配合框架的 model 层实现自动验证)
 - 独立使用
 ```go
 package main
@@ -347,4 +347,4 @@ rule := {Attr: "zipcode", Rule: "zipcode"}
 // pattern = `^[1-9]\d{5}$`
 ```
 
-## autoValidator
+## 配合框架的 model 层实现自动验证
