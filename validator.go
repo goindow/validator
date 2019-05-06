@@ -187,8 +187,8 @@ func (this *validator) generator(name string, attr string, rule Rule, placeholde
 	// 内置错误信息
 	e, ok = this.default_errors[name]
 	if ok {
-		// 替换标签
-		e = strings.Replace(e, "{label}", attr, -1)
+		// 替换标签，已删除
+		// e = strings.Replace(e, "{label}", attr, -1)
 		// 替换占位符
 		e = fmt.Sprintf(e, placeholder...)
 	} else { // 内置错误信息不存在
