@@ -126,7 +126,6 @@ package main
 
 import (
     "github.com/goindow/validator"
-    "errors"
     "fmt"
 )
 
@@ -136,14 +135,14 @@ func main() {
     // 自定义错误处理函数，函数类型为 validator.F
     var oneValidator validator.F = func(attr string, rule validator.Rule, obj validator.M) validator.E {
         if _, ok := obj[attr]; !ok {
-            return validator.E{attr: errors.New("not found")}
+            return validator.E{attr: "not found"}
         }
         if obj[attr] != 1 {
             e := rule.Message
             if e == "" {
                 e = "必须等于一"
             }
-            return validator.E{attr: errors.New(e)} 
+            return validator.E{attr: e} 
         }
         return nil
     }
@@ -190,7 +189,7 @@ func main() {
 ```go
 rule := {Attr: "password", Rule: "func", Func: func(attr string, rule validator.Rule, obj validator.M) validator.E {
     if obj["password"] != obj["rpassword"] {
-        return validator.E{attr: errors.New("两次输入不一致")}
+        return validator.E{attr: "两次输入不一致"}
     }
     return nil
 }}

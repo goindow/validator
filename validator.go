@@ -68,7 +68,7 @@ type Rules map[Scence]ScenceRules
 type M map[string]interface{}
 
 // 验证错误类型
-type E map[string]error
+type E map[string]string
 
 // 验证器函数类型
 type F func(string, Rule, M) E
@@ -182,7 +182,7 @@ func (this *validator) generator(name string, attr string, rule Rule, placeholde
 	e := rule.Message
 	// 自定义错误信息
 	if e != "" {
-		return E{attr: errors.New(e)}
+		return E{attr: e}
 	}
 	// 内置错误信息
 	e, ok = this.default_errors[name]
@@ -194,7 +194,7 @@ func (this *validator) generator(name string, attr string, rule Rule, placeholde
 	} else { // 内置错误信息不存在
 		e = "unknow error"
 	}
-	return E{attr: errors.New(e)}
+	return E{attr: e}
 }
 
 // mount 挂载内置验证器
