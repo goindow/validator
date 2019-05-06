@@ -492,6 +492,7 @@ func (this *UserController) Signup() {
         if e := user.Validate(&user, js, "signup"); len(e) != 0 {
             this.ReturnJson(3000, nil, e)
         } else {
+            // todo:
             this.ReturnJson(2000, nil, "注册成功")
         }
     }
@@ -506,6 +507,7 @@ func (this *UserController) Signin() {
         if e := user.Validate(&user, js, "signin"); len(e) != 0 {
             this.ReturnJson(3001, nil, e)
         } else {
+            // todo:
             this.ReturnJson(2000, nil, "登陆成功")
         }
     }
