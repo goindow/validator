@@ -72,11 +72,11 @@ func main() {
                 fmt.Printf("%v => %v\n", k, v)
             }
         }
-        // username => username 不能为空
+        // username => 不能为空
         // password => 密码必须由大写字母开头
-        // gender => gender 只能是 [0、1] 中的一个
-        // age => age 必须是不小于 18 的整数
-        // weight => weight 必须是数字
+        // gender => 只能是 [0、1] 中的一个
+        // age => 必须是不小于 18 的整数
+        // weight => 必须是数字
         // email => 无效的 email
     }
     // todo: do something
