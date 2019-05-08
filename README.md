@@ -146,7 +146,7 @@ import (
 func main() {
     v := validator.New()
 
-    // 自定义错误处理函数，函数类型为 validator.F
+    // 自定义验证器，类型为 validator.F
     var oneValidator validator.F = func(attr string, rule validator.Rule, obj validator.M) validator.E {
         if _, ok := obj[attr]; !ok {
             return validator.E{attr: "not found"}
