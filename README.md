@@ -197,14 +197,6 @@ func main() {
 
 ### funcValidator
 - 使用 Rule.Func 定义的函数来验证本条规则，Rule.Func 的类型是 validator.F
-
-| 属性 | 选择 | 类型 | 默认值 | 说明 |
-| - | - | - | - | - |
-| Rule.Rule | 必选 | string | "func" | 使用 Rule.Func 定义的函数来验证本条规则，Rule.Func 的类型是 validator.F |
-| Rule.Required | 可选 | bool | false | false - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误 |
-| Rule.Func | 必选 | validator.F | - | 使用 Rule.Func 来验证本条 Rule |
-
-- 使用 Rule.Func 定义的函数来验证本条规则，Rule.Func 的类型是 validator.F
 - Rule.Rule        string         必选    func
 - Rule.Required    bool           可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 - Rule.Func        validator.F    必选    使用 Rule.Func 来验证本条 Rule
