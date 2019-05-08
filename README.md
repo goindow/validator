@@ -197,6 +197,7 @@ func main() {
 
 ### funcValidator
 
+| - | - | - | - |
 | Rule.Rule | string | 必选 | func |
 | Rule.Required | bool | 可选 | false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误 |
 
