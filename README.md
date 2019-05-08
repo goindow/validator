@@ -196,9 +196,13 @@ func main() {
 - [zipcodeValidator](#zipcodeValidator)
 
 ### funcValidator
+
+| Rule.Rule | string | 必选 | func |
+| Rule.Required | bool | 可选 | false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误 |
+
 - 使用 Rule.Func 定义的函数来验证本条规则，Rule.Func 的类型是 validator.F
-- Rule.Rule&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string         必选    func
-- Rule.Required&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool           可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
+- Rule.Rule        string         必选    func
+- Rule.Required    bool           可选    false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误
 - Rule.Func        validator.F    必选    使用 Rule.Func 来验证本条 Rule
 ```go
 rule := {Attr: "password", Rule: "func", Func: func(attr string, rule validator.Rule, obj validator.M) validator.E {
