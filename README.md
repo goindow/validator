@@ -197,9 +197,10 @@ func main() {
 
 ### funcValidator
 
-| - | - | - | - |
-| Rule.Rule | string | 必选 | func |
-| Rule.Required | bool | 可选 | false(默认) - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误 |
+| 参数 |详细解释|备注| 
+| - | - | - |
+| -l | use a long listing format |以长列表方式显示（显示出文件/文件夹详细信息） | 
+| -t | sort by modification time |按照修改时间排序（默认最近被修改的文件/文件夹排在最前面） | 
 
 - 使用 Rule.Func 定义的函数来验证本条规则，Rule.Func 的类型是 validator.F
 - Rule.Rule        string         必选    func
