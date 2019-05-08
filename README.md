@@ -196,11 +196,13 @@ func main() {
 - [zipcodeValidator](#zipcodeValidator)
 
 ### funcValidator
+- 使用 Rule.Func 定义的函数来验证本条规则，Rule.Func 的类型是 validator.F
 
-| 使用 Rule.Func 定义的函数来验证本条规则，Rule.Func 的类型是 validator.F | 
-| - | - | - |
-| -l | use a long listing format |以长列表方式显示（显示出文件/文件夹详细信息） | 
-| -t | sort by modification time |按照修改时间排序（默认最近被修改的文件/文件夹排在最前面） | 
+| 属性 | 选择 | 类型 | 默认值 | 说明 |
+| - | - | - | - | - |
+| Rule.Rule | 必选 | string | "func" | 使用 Rule.Func 定义的函数来验证本条规则，Rule.Func 的类型是 validator.F |
+| Rule.Required | 可选 | bool | false | false - 被验证字段有值验证/无值跳过，true - 被验证字段无值，验证失败，报 reqired 错误 |
+| Rule.Func | 必选 | validator.F | - | 使用 Rule.Func 来验证本条 Rule |
 
 - 使用 Rule.Func 定义的函数来验证本条规则，Rule.Func 的类型是 validator.F
 - Rule.Rule        string         必选    func
