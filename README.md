@@ -501,7 +501,7 @@ func (this *UserController) Signup() {
 // @router /signin [post]
 func (this *UserController) Signin() {
     if js, err := this.LoadJson(); err != nil {
-        epicker.Print(err)  // 无法解析的 json，返回 "json 格式错误" 错误
+        this.ReturnJson(4000, nil, "Json 解析失败")
     } else {
         var user models.User
         if e := user.Validate(&user, js, "signin"); len(e) != 0 {
