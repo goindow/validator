@@ -236,7 +236,7 @@ rule := {Attr: "gender", Rule: "in", Enum: {"male", "female", "unknown"}, Requir
 rule := {Attr: "name", Rule: "string"}
 rule := {Attr: "name", Rule: "string", Min: 6} // utf8 字符数，即字符串长度，兼容中文
 rule := {Attr: "name", Rule: "string", Min: 6, Max: 18}
-rule := {Attr: "name", Rule: "string", Min: 6, Max: 18, required: true}
+rule := {Attr: "name", Rule: "string", Min: 6, Max: 18, Required: true}
 ```
 
 ### integerValidator
@@ -252,7 +252,7 @@ rule := {Attr: "age", Rule: "int"}
 rule := {Attr: "age", Rule: "integer", Symobl: 1} // 正整数
 rule := {Attr: "age", Rule: "integer", Min: 18}
 rule := {Attr: "age", Rule: "integer", Min: 18, Max: 18} // == 18
-rule := {Attr: "age", Rule: "integer", Min: 18, Max: 35, required: true}
+rule := {Attr: "age", Rule: "integer", Min: 18, Max: 35, Required: true}
 
 // float64(18)、float32(18)、"18" 都会被认为是整数
 ```
@@ -270,7 +270,7 @@ rule := {Attr: "field", Rule: "float"}
 rule := {Attr: "field", Rule: "decimal", Symobl: -1} // 负小数
 rule := {Attr: "field", Rule: "decimal", Min: 2}
 rule := {Attr: "field", Rule: "decimal", Min: 3.14, Max: 3.14} // == 3.14
-rule := {Attr: "field", Rule: "decimal", Min: 3, Max: 3.14, required: true}
+rule := {Attr: "field", Rule: "decimal", Min: 3, Max: 3.14, Required: true}
 
 // float64(18)、float32(18)、"18" 没有小数位会验证失败
 ```
@@ -287,7 +287,7 @@ rule := {Attr: "weight", Rule: "number"}
 rule := {Attr: "weight", Rule: "number", Symobl: 1}
 rule := {Attr: "weight", Rule: "number", Min: 45}
 rule := {Attr: "weight", Rule: "number", Min: 45, Max: 45} // == 45
-rule := {Attr: "weight", Rule: "number", Min: 45, Max: 49.9, required: true}
+rule := {Attr: "weight", Rule: "number", Min: 45, Max: 49.9, Required: true}
 ```
 
 ### booleanValidator
